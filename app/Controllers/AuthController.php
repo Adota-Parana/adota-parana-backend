@@ -42,7 +42,7 @@ class AuthController
 
     public function showLoginForm(Request $request): void
     {
-        require __DIR__ . '/../views/auth/Login.php';
+     $this->view('auth/Login', ['title' => 'Login']);
     }
 
     public function login(Request $request): void
@@ -81,4 +81,11 @@ class AuthController
         header('Location: /');
         exit;
     }
+
+    protected function view(string $viewName, array $data = []): void
+{
+    $view = __DIR__ . '/../views/' . $viewName . '.php';
+    extract($data);
+    require __DIR__ . '/../views/layouts/application.phtml';
+}
 }

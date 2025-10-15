@@ -79,6 +79,12 @@ CREATE TABLE `moderation` (
   FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`)
 );
 
+INSERT INTO `users` (`name`, `email`, `encrypted_password`, `role`)
+VALUES ('Admin', 'admin@gmail.com', SHA2('123456', 256), 'admin');
+
+INSERT INTO `users` (`name`, `email`, `encrypted_password`, `role`)
+VALUES ('User', 'user@gmail.com', SHA2('123456', 256), 'user');
+
 SET foreign_key_checks = 1;
 
 -- ========================= Banco de teste =========================
