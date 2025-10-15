@@ -27,7 +27,7 @@ Route::group(['middleware' => ['Authenticate', 'Admin']], function() {
 });
 
 Route::group(['middleware' => ['Authenticate']], function() {
-    Route::get('/dashboard', [UserController::class, 'dashboard']);
+    Route::get('/user/dashboard', [UserController::class, 'index']);
 
     Route::get('/user/profile', [UserController::class, 'editProfile']);
 

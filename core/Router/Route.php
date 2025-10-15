@@ -11,14 +11,16 @@ class Route
 
     /**
      * @var Middleware[]
+     * 
      */
     private array $middlewares = [];
+    private static array $groupOptions = [];
 
     public function __construct(
         private string $method,
         private string $uri,
         private string $controllerName,
-        private string $actionName
+        private string $actionName,
     ) {}
 
     public function name(string $name): void
@@ -107,6 +109,21 @@ class Route
      * @param mixed[] $action
      * @return Route
      */
+    
+    public static function group(array $options, callable $callback): void
+    {
+        $previous = self::$groupOptions;
+
+        self::$groupOptions = array_merge(self::$groupOptions, $options);
+
+        $callback(); // This will run the routes inside the group
+
+        self::$groupOptions = $previous; // Reset after group
+    }   
+    
+    
+    
+    
     public static function get(string $uri, $action): Route
     {
         return Router::getInstance()->addRoute(new Route('GET', $uri, $action[0], $action[1]));
