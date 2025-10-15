@@ -20,13 +20,11 @@
                 <td style="padding: 8px;"><?= htmlspecialchars($user->email) ?></td>
                 <td style="padding: 8px;"><?= htmlspecialchars($user->role) ?></td>
                 <td style="padding: 8px; text-align: center;">
-                    <?php if ($user->id !== auth()->id()): // Não mostrar botão para o próprio admin ?>
-                        <form action="/admin/users/delete/<?= $user->id ?>" method="POST" style="display:inline;">
-                            <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este usuário? Esta ação não pode ser desfeita.');">
-                                Deletar
-                            </button>
-                        </form>
-                    <?php endif; ?>
+                    <form action="/admin/users/delete/<?= $user->id ?>" method="POST" style="display:inline;">
+                        <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este usuário? Esta ação não pode ser desfeita.');">
+                            Deletar
+                        </button>
+                    </form>
                 </td>
             </tr>
         <?php endforeach; ?>
