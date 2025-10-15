@@ -9,6 +9,7 @@
         <div class="card">
             <h3>Total de Usuários</h3>
             <p><?= $stats['users'] ?? 0 ?></p>
+            <a href="/admin/users">Gerenciar Usuários</a>
         </div>
 
         <div class="card">

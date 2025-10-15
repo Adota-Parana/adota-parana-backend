@@ -8,22 +8,28 @@ use Core\Router\Route;
 use Core\Router\RouteWrapperMiddleware;
 use App\Controllers\UserController;
 
+Route::get('/', [HomeController::class, 'index'])->name('root');
+
 Route::get('/register', [AuthController::class, 'showRegistrationForm']);
 Route::post('/register', [AuthController::class, 'register']);
-Route::get('/', [HomeController::class, 'index'])->name('root');
+
 Route::get('/login', [AuthController::class, 'showLoginForm']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 
-$adminGroup = new RouteWrapperMiddleware('admin');
+Route::group(['middleware' => ['Authenticate', 'Admin']], function() {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 
-$adminGroup->group(function() {
-    Route::get('/admin/dashboard', [AdminController::class, 'index']);
+    Route::get('/admin/users', [AdminController::class, 'usersIndex']);
+
+    Route::post('/admin/users/delete/{id}', [AdminController::class, 'usersDelete']);
 });
 
-$authGroup = new RouteWrapperMiddleware('auth');
+Route::group(['middleware' => ['Authenticate']], function() {
+    Route::get('/dashboard', [UserController::class, 'dashboard']);
 
-$authGroup->group(function() {
-    Route::get('/user/dashboard', [UserController::class, 'index']);
+    Route::get('/user/profile', [UserController::class, 'editProfile']);
+
+    Route::post('/user/profile/update', [UserController::class, 'updateProfile']);
 });

@@ -13,19 +13,34 @@ class AdminController
     public function index(Request $request):string
     {
         $stats = [
-            'users' => 120,
-            'animals' => 40,
+            usersIndex(),
         ];
 
         return $this->view('admin/Dashboard', compact('stats'));
     }
 
-    public function users(Request $request):string
+    public function usersIndex():string
     {
-        $users = \App\Models\User::all();
-
-        return $this->view('admin/users', compact('users'));
+        $users = Users::all();
+        return $this->view('admin/users/index', ['users' => $users]);
     }
+
+    public function usersDelete(ind $id)
+    {
+        $user = User::find($id);
+
+        if($user && $user => id != auth() => id()){
+            $user => destroy();
+            FlashMessage::sucess('Usuario deletado!')
+        }
+
+        else{
+            FlashMessage::error('Não é possivel deletar seu proprio usuario!')
+        }
+
+        return redirect('/admin/users')
+    }
+
 
     protected function view(string $path, array $data = []): string
     {
