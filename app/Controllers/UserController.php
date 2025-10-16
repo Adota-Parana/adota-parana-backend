@@ -13,14 +13,14 @@ class UserController
        return $this->view('user/dashboard');
     }
 
-    public function editProfile()
+    public function edit()
     {
         $user = \App\Services\Auth::user();
 
         return $this->view('user/profile/edit', ['user' => $user]);
     }
 
-    public function updateProfile(\Core\Http\Request $request)
+    public function update(\Core\Http\Request $request)
     {
         $user = \App\Services\Auth::user();
 

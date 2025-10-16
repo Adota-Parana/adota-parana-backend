@@ -1,34 +1,37 @@
-<h1>Gerenciamento de Usuários</h1>
-<p>Aqui você pode ver e deletar usuários do sistema.</p>
+<?php require __DIR__ . '/../../layouts/_header.php'; ?>
 
-<table border="1" style="width:100%; border-collapse: collapse;">
-    <thead>
-        <tr>
-            <th style="padding: 8px;">ID</th>
-            <th style="padding: 8px;">Nome</th>
-            <th style="padding: 8px;">Email</th>
-            <th style="padding: 8px;">Perfil</th>
-            <th style="padding: 8px;">Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($users as $user): ?>
+<div class="container mt-5">
+    <h1 class="mb-4">Gerenciar Usuários</h1>
+
+    <?php require __DIR__ . '/../../layouts/_flash_message.php'; ?>
+
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td style="padding: 8px;"><?= $user->id ?></td>
-                <td style="padding: 8px;"><?= htmlspecialchars($user->name) ?></td>
-                <td style="padding: 8px;"><?= htmlspecialchars($user->email) ?></td>
-                <td style="padding: 8px;"><?= htmlspecialchars($user->role) ?></td>
-                <td style="padding: 8px; text-align: center;">
-                    <form action="/admin/users/delete/<?= $user->id ?>" method="POST" style="display:inline;">
-                        <button type="submit" onclick="return confirm('Tem certeza que deseja deletar este usuário? Esta ação não pode ser desfeita.');">
-                            Deletar
-                        </button>
-                    </form>
-                </td>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Função</th>
+                <th>Ações</th>
             </tr>
-        <?php endforeach; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            <?php foreach ($users as $user): ?>
+                <tr>
+                    <td><?= $user->id ?></td>
+                    <td><?= htmlspecialchars($user->name) ?></td>
+                    <td><?= htmlspecialchars($user->email) ?></td>
+                    <td><?= $user->role ?></td>
+                    <td>
+                        <a href="/admin/users/<?= $user->id ?>/edit" class="btn btn-sm btn-secondary">Editar</a>
+                        <form action="/admin/users/<?= $user->id ?>/delete" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
 
-<br>
-<a href="/admin/dashboard">Voltar ao Dashboard</a>
+<?php require __DIR__ . '/../../layouts/_footer.php'; ?>

@@ -10,6 +10,7 @@ SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS `reports`;
 DROP TABLE IF EXISTS `interesting`;
 DROP TABLE IF EXISTS `moderation`;
+DROP TABLE IF EXISTS `pet_images`;
 DROP TABLE IF EXISTS `pets`;
 DROP TABLE IF EXISTS `species`;
 DROP TABLE IF EXISTS `users`;
@@ -19,9 +20,9 @@ CREATE TABLE `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` varchar(70) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `encrypted_password` varchar(255) NOT NULL,
+  `encrypted_password` varchar(64) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  `role` varchar(50) NOT NULL DEFAULT 'user',
+  `role` varchar(10) NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 );
@@ -39,13 +40,22 @@ CREATE TABLE `pets` (
   `name` varchar(25) NOT NULL,
   `birth_date` date DEFAULT NULL,
   `sex` char(1) DEFAULT NULL,
+  `is_vaccinated` boolean DEFAULT NULL,
+  `is_neutered` boolean DEFAULT NULL,
   `description` varchar(300) DEFAULT NULL,
-  `img_path` varchar(255) DEFAULT NULL,
   `status` varchar(25) NOT NULL,
   `post_date` datetime NOT NULL,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`specie_id`) REFERENCES `species` (`id`),
   FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
+
+CREATE TABLE `pet_images` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `pet_id` INT NOT NULL,
+  `image` blob,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`pet_id`) REFERENCES `pets` (`id`)
 );
 
 CREATE TABLE `interesting` (
@@ -98,9 +108,9 @@ CREATE TABLE `users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` varchar(70) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `encrypted_password` varchar(255) NOT NULL,
+  `encrypted_password` varchar(64) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
-  `role` varchar(50) NOT NULL DEFAULT 'user',
+  `role` varchar(10) NOT NULL DEFAULT 'user',
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 );

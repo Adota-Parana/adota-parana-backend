@@ -3,6 +3,7 @@
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\AdminController;
+use App\Controllers\PetController;
 use App\Middleware\Admin;
 use Core\Router\Route;
 use Core\Router\RouteWrapperMiddleware;
@@ -32,4 +33,11 @@ Route::middleware('auth')->group(function() {
     Route::get('/user/profile', [UserController::class, 'editProfile']);
 
     Route::post('/user/profile/update', [UserController::class, 'updateProfile']);
+
+    Route::get('/feed', [PetController::class, 'index'])->name('feed');
+    Route::get('/pets/create', [PetController::class, 'create']);
+    Route::post('/pets', [PetController::class, 'store']);
+    Route::get('/pets/{id}/edit', [PetController::class, 'edit']);
+    Route::post('/pets/{id}/update', [PetController::class, 'update']);
+    Route::post('/pets/{id}/delete', [PetController::class, 'destroy']);
 });

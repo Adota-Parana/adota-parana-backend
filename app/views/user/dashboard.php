@@ -1,6 +1,23 @@
-<?php include __DIR__ . '/../partials/header.php' ?>
+<?php require __DIR__ . '/../layouts/_header.php'; ?>
 
-<h1>Ola Usuário!</h1>
-<a href="/user/profile">Meu Perfil</a>
+<div class="container mt-5">
+    <h1 class="mb-4">Painel do Usuário</h1>
 
-<?php include __DIR__ . '/../partials/footer.php' ?>
+    <?php require __DIR__ . '/../layouts/_flash_message.php'; ?>
+
+    <p>Bem-vindo ao seu painel, <?= htmlspecialchars($currentUser->name) ?>!</p>
+    
+    <div class="list-group">
+        <a href="/user/profile" class="list-group-item list-group-item-action">
+            Meu Perfil
+        </a>
+        <a href="/pets/create" class="list-group-item list-group-item-action">
+            Adicionar um Novo Pet
+        </a>
+        <a href="/feed" class="list-group-item list-group-item-action">
+            Ver Pets para Adoção
+        </a>
+    </div>
+</div>
+
+<?php require __DIR__ . '/../layouts/_footer.php'; ?>
