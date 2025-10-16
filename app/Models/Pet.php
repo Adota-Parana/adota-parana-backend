@@ -7,7 +7,7 @@ use Core\Database\ActiveRecord\Model;
 
 class Pet extends Model
 {
-    protected static string $tableName = 'pets';
+    protected static string $table = 'pets';
     protected static array $columns = [
         'specie_id',
         'user_id',

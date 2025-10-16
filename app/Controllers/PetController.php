@@ -11,12 +11,13 @@ class PetController
 {
     public function index()
     {
-        return view('home/feed', ['pets' => $pets])
+        $pets = Pet::all();
+        return view('/feed', ['pets' => $pets]);
     }
 
     public function create()
     {
-        return view('pets/create')
+        return view('/pets/create');
     }
 
     public function store(\Core\Http\Request $request)
@@ -34,12 +35,12 @@ class PetController
         $pet->status = 'disponivel';
 
         if($pet->save()){
-            FlashMessage::sucess('Pet cadastrado com sucesso!');
+            FlashMessage::success('Pet cadastrado com sucesso!');
             return redirect('/feed');
         }
         else{
             FlashMessage::danger('Erro ao cadastrar pet!');
-            return view('pets/create');
+            return view('/pets/create');
         }
     }
 
@@ -53,7 +54,7 @@ class PetController
             return redirect('/feed');
         }
 
-        return view('pets/edit', ['pet' => $pet]);
+        return view('/pets/edit', ['pet' => $pet]);
     }
 
     public function update(\Core\Http\Request $request, int $id)
@@ -69,12 +70,12 @@ class PetController
         $pet->fill($request->all());
 
         if($pet->save()){
-            FlashMessage::sucess('Pet atualizado com sucesso!');
+            FlashMessage::success('Pet atualizado com sucesso!');
             return redirect('/feed');
         }
         else{
             FLashMessage::danger('Erro ao atualizar pet!');
-            return view('pets/edit', ['pet' => $pet]);
+            return view('/pets/edit', ['pet' => $pet]);
         }
     }
 
@@ -89,7 +90,7 @@ class PetController
         }
 
         if($pet->delete()){
-            FlashMessage::sucess('Pet excluído com sucesso!');
+            FlashMessage::success('Pet excluído com sucesso!');
             return redirect('/feed');
         }
         else{
