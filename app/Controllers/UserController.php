@@ -34,7 +34,7 @@ class UserController
         } 
         
         else {
-            FlashMessage::error('Erro ao atualizar perfil!');
+            FlashMessage::danger('Erro ao atualizar perfil!');
             return $this->view('user/profile/edit', ['user' => $user]);
         }
     }

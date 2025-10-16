@@ -1,4 +1,3 @@
-<!-- app/views/admin/users/index.php -->
 <h1>Gerenciamento de Usuários</h1>
 <p>Aqui você pode ver e deletar usuários do sistema.</p>
 

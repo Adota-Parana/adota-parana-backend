@@ -15,15 +15,10 @@
     <br>
     <div>
         <label for="phone">Telefone:</label><br>
-        <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($user->phone) ?>">
+        <input type="tel" id="phone" name="phone" value="<?= htmlspecialchars($user->phone ?? '') ?>">
     </div>
     <hr>
-    <p>Para alterar sua senha, preencha o campo abaixo. Caso contrário, deixe em branco.</p>
-    <div>
-        <label for="password">Nova Senha:</label><br>
-        <input type="password" id="password" name="password">
-    </div>
     <br>
     <button type="submit">Salvar Alterações</button>
-    <a href="/dashboard">Cancelar</a>
+    <a href="/user/dashboard">Cancelar</a>
 </form>

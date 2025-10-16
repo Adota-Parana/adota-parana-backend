@@ -18,7 +18,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 
-Route::group(['middleware' => ['Authenticate', 'Admin']], function() {
+Route::middleware('admin')->group(function() {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 
     Route::get('/admin/users', [AdminController::class, 'usersIndex']);
@@ -26,7 +26,7 @@ Route::group(['middleware' => ['Authenticate', 'Admin']], function() {
     Route::post('/admin/users/delete/{id}', [AdminController::class, 'usersDelete']);
 });
 
-Route::group(['middleware' => ['Authenticate']], function() {
+Route::middleware('auth')->group(function() {
     Route::get('/user/dashboard', [UserController::class, 'index']);
 
     Route::get('/user/profile', [UserController::class, 'editProfile']);

@@ -24,12 +24,13 @@ class AdminController
         return $this->view('admin/users/index', ['users' => $users]);
     }
 
-    public function usersDelete($id)
+    public function usersDelete(Request $request)
     {
-        $user = \App\Services\Auth::user();
+        $id = (int) $request->getParam('id');
+        $userToDelete = User::findById($id);
 
-        if ($user && $user->id != Auth::user()->id) {
-            $user->destroy(id);
+        if ($userToDelete && $userToDelete->id != Auth::user()->id) {
+            $userToDelete->destroy();
             FlashMessage::success('Usuário deletado!');
         } 
         else 
