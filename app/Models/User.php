@@ -64,6 +64,11 @@ class User extends Model
         return User::findBy(['phone' => $phone]);
     }
 
+        public static function findById(int $id): ?static
+    {
+        return User::findBy(['id' => $id]);
+    }
+
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

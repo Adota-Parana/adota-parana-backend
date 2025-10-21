@@ -1,9 +1,9 @@
-<?php require __DIR__ . '/../../layouts/_header.php'; ?>
+<?php require __DIR__ . '/../layouts/_header.php'; ?>
 
 <div class="container mt-5">
     <h1 class="mb-4">Gerenciar Usuários</h1>
 
-    <?php require __DIR__ . '/../../layouts/_flash_message.php'; ?>
+    <?php require __DIR__ . '/../layouts/_flash_message.phtml'; ?>
 
     <table class="table table-striped">
         <thead>
@@ -23,7 +23,6 @@
                     <td><?= htmlspecialchars($user->email) ?></td>
                     <td><?= $user->role ?></td>
                     <td>
-                        <a href="/admin/users/<?= $user->id ?>/edit" class="btn btn-sm btn-secondary">Editar</a>
                         <form action="/admin/users/<?= $user->id ?>/delete" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
                         </form>
@@ -34,4 +33,4 @@
     </table>
 </div>
 
-<?php require __DIR__ . '/../../layouts/_footer.php'; ?>
+<?php require __DIR__ . '/../layouts/_footer.php'; ?>

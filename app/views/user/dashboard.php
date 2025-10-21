@@ -3,7 +3,7 @@
 <div class="container mt-5">
     <h1 class="mb-4">Painel do Usuário</h1>
 
-    <?php require __DIR__ . '/../layouts/_flash_message.php'; ?>
+    <?php require __DIR__ . '/../layouts/_flash_message.phtml'; ?>
 
     <p>Bem-vindo ao seu painel, <?= htmlspecialchars($currentUser->name) ?>!</p>
     

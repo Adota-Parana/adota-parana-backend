@@ -9,19 +9,10 @@ use App\Models\User;
 
 class AdminController
 {
-    public function dashboard(Request $request): string
-    {
-        $stats = [
-            $this->usersIndex(),
-        ];
-
-        return $this->view('admin/Dashboard', compact('stats'));
-    }
-
-    public function usersIndex(): string
+    public function index(): string
     {
         $users = User::all();
-        return $this->view('admin/users/index', ['users' => $users]);
+        return $this->view('admin/index', ['users' => $users]);
     }
 
     public function usersDelete(Request $request)
@@ -38,7 +29,7 @@ class AdminController
             FlashMessage::danger('Não é possível deletar seu próprio usuário!');
         }
 
-        return header('Location: /admin/users');
+        return header('Location: /admin/index');
     }
 
     protected function view(string $path, array $data = []): string

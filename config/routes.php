@@ -20,9 +20,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 
 
 Route::middleware('admin')->group(function() {
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
-
-    Route::get('/admin/users', [AdminController::class, 'usersIndex']);
+    Route::get('/admin/dashboard', [AdminController::class, 'index']);
 
     Route::post('/admin/users/delete/{id}', [AdminController::class, 'usersDelete']);
 });
@@ -30,9 +28,9 @@ Route::middleware('admin')->group(function() {
 Route::middleware('auth')->group(function() {
     Route::get('/user/dashboard', [UserController::class, 'index']);
 
-    Route::get('/user/profile', [UserController::class, 'editProfile']);
+    Route::get('/user/profile', [UserController::class, 'edit']);
 
-    Route::post('/user/profile/update', [UserController::class, 'updateProfile']);
+    Route::post('/user/profile/update', [UserController::class, 'update']);
 
     Route::get('/feed', [PetController::class, 'index'])->name('feed');
     Route::get('/pets/create', [PetController::class, 'create']);
