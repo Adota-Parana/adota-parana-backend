@@ -80,21 +80,3 @@ CREATE TABLE `moderation` (
 );
 
 SET foreign_key_checks = 1;
-
--- ========================= Banco de teste =========================
-
-CREATE DATABASE IF NOT EXISTS `adota_parana_test`; 
-USE `adota_parana_test`;
-
-DROP TABLE IF EXISTS `users`;
-
-CREATE TABLE `users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` varchar(70) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `encrypted_password` varchar(255) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `role` varchar(50) NOT NULL DEFAULT 'user',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-);
