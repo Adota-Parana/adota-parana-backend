@@ -77,6 +77,6 @@ class UserController
     {
         extract($data);
         $user = \App\Services\Auth::user(); 
-        return include __DIR__ . "/../views/{$path}.php";
+        return include __DIR__ . "/../views/{$path}.phtml";
     }
 }

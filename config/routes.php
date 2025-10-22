@@ -22,7 +22,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::middleware('admin')->group(function() {
     Route::get('/admin/dashboard', [AdminController::class, 'index']);
 
-    Route::post('/admin/users/delete/{id}', [AdminController::class, 'usersDelete']);
+    Route::post('/admin/users/{id}/delete', [AdminController::class, 'usersDelete']);
 });
 
 Route::middleware('auth')->group(function() {
@@ -34,8 +34,11 @@ Route::middleware('auth')->group(function() {
 
     Route::get('/feed', [PetController::class, 'index'])->name('feed');
     Route::get('/pets/create', [PetController::class, 'create']);
+
     Route::post('/pets', [PetController::class, 'store']);
+
     Route::get('/pets/{id}/edit', [PetController::class, 'edit']);
     Route::post('/pets/{id}/update', [PetController::class, 'update']);
+    
     Route::post('/pets/{id}/delete', [PetController::class, 'destroy']);
 });

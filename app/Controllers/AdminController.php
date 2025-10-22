@@ -9,33 +9,43 @@ use App\Models\User;
 
 class AdminController
 {
-    public function index(): string
+    public function index()
     {
         $users = User::all();
-        return $this->view('admin/index', ['users' => $users]);
+        $this->view('admin/index', ['users' => $users]);
     }
 
-    public function usersDelete(Request $request)
+    public function usersDelete(Request $request, int $id)
     {
-        $id = (int) $request->getParam('id');
-        $userToDelete = User::findById($id);
+        $userToDelete = User::find($id);
+        $currentUser = Auth::user();
 
-        if ($userToDelete && $userToDelete->id != Auth::user()->id) {
-            $userToDelete->destroy();
-            FlashMessage::success('Usuário deletado!');
-        } 
-        else 
-        {
-            FlashMessage::danger('Não é possível deletar seu próprio usuário!');
+        if (!$userToDelete) {
+            FlashMessage::danger('Usuário não encontrado.');
+            header('Location: /admin/dashboard');
+            return;
         }
 
-        return header('Location: /admin/index');
+        if ($userToDelete->id === $currentUser->id) {
+            FlashMessage::danger('Você não pode excluir seu próprio usuário.');
+            header('Location: /admin/dashboard');
+            return;
+        }
+
+        if ($userToDelete->delete()) {
+            FlashMessage::success('Usuário excluído com sucesso!');
+        } else {
+            FlashMessage::danger('Ocorreu um erro ao excluir o usuário.');
+        }
+
+        header('Location: /admin/dashboard');
+        return;
     }
 
-    protected function view(string $path, array $data = []): string
+    protected function view(string $viewName, array $data = []): void
     {
+        $view = __DIR__ . '/../views/' . $viewName . '.phtml';
         extract($data);
-        $user = Auth::user();
-        return include __DIR__ . "/../views/{$path}.php";
+        require __DIR__ . '/../views/layouts/application.phtml';
     }
 }

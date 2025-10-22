@@ -11,7 +11,7 @@ class AuthController
 {
     public function showRegistrationForm(Request $request): void
     {
-        require __DIR__ . '/../views/auth/register.php';
+        $this->view('auth/register');
     }
 
 public function register(Request $request)
@@ -91,7 +91,7 @@ public function register(Request $request)
 
     public function showLoginForm(Request $request): void
     {
-     $this->view('auth/Login', ['title' => 'Login']);
+     $this->view('auth/login', ['title' => 'login']);
     }
 
     public function login(Request $request): void
@@ -133,7 +133,7 @@ public function register(Request $request)
 
     protected function view(string $viewName, array $data = []): void
 {
-    $view = __DIR__ . '/../views/' . $viewName . '.php';
+    $view = __DIR__ . '/../views/' . $viewName . '.phtml';
     extract($data);
     require __DIR__ . '/../views/layouts/application.phtml';
 }

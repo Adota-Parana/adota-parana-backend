@@ -12,35 +12,37 @@ class PetController
     public function index()
     {
         $pets = Pet::all();
-        return view('/feed', ['pets' => $pets]);
+        $this->view('home/feed', ['pets' => $pets]);
     }
 
     public function create()
     {
-        return view('/pets/create');
+        $this->view('pets/create');
     }
 
-    public function store(\Core\Http\Request $request)
+    public function store(Request $request)
     {
         $user = Auth::user();
 
-        if(!$user){
+        if (!$user) {
             FlashMessage::danger('Você precisa estar logado para criar um pet!');
-            return redirect('/login');
+            header('Location: /login');
+            return;
         }
 
-        $pet = new Pet($request -> all());
-        $pet->user_id = $user -> id;
+        $pet = Pet::all();
+        $pet->user_id = $user->id;
         $pet->post_date = date('Y-m-d H:i:s');
         $pet->status = 'disponivel';
 
-        if($pet->save()){
+        if ($pet->save()) {
             FlashMessage::success('Pet cadastrado com sucesso!');
-            return redirect('/feed');
-        }
-        else{
+            header('Location: /feed');
+            return;
+        } else {
             FlashMessage::danger('Erro ao cadastrar pet!');
-            return view('/pets/create');
+            $this->view('pets/create');
+            return;
         }
     }
 
@@ -49,33 +51,36 @@ class PetController
         $pet = Pet::find($id);
         $user = Auth::user();
 
-        if(!$user || $user->id !== $pet->user_id){
+        if (!$user || $user->id !== $pet->user_id) {
             FlashMessage::danger('Você não tem permissão para editar este pet!');
-            return redirect('/feed');
+            header('Location: /feed');
+            return;
         }
 
-        return view('/pets/edit', ['pet' => $pet]);
+        $this->view('pets/edit', ['pet' => $pet]);
     }
 
-    public function update(\Core\Http\Request $request, int $id)
+    public function update(Request $request, int $id)
     {
         $pet = Pet::find($id);
         $user = Auth::user();
 
-        if(!$user || $user->id !== $pet->user_id){
+        if (!$user || $user->id !== $pet->user_id) {
             FlashMessage::danger('Você não tem permissão para editar este pet!');
-            return redirect('/feed');
+            header('Location: /feed');
+            return;
         }
 
         $pet->fill($request->all());
 
-        if($pet->save()){
+        if ($pet->save()) {
             FlashMessage::success('Pet atualizado com sucesso!');
-            return redirect('/feed');
-        }
-        else{
-            FLashMessage::danger('Erro ao atualizar pet!');
-            return view('/pets/edit', ['pet' => $pet]);
+            header('Location: /feed');
+            return;
+        } else {
+            FlashMessage::danger('Erro ao atualizar pet!');
+            $this->view('pets/edit', ['pet' => $pet]);
+            return;
         }
     }
 
@@ -84,18 +89,27 @@ class PetController
         $pet = Pet::find($id);
         $user = Auth::user();
 
-        if(!$user || $user->id !== $pet->user_id){
+        if (!$user || $user->id !== $pet->user_id) {
             FlashMessage::danger('Você não tem permissão para excluir este pet!');
-            return redirect('/feed');
+            header('Location: /feed');
+            return;
         }
 
-        if($pet->delete()){
+        if ($pet->delete()) {
             FlashMessage::success('Pet excluído com sucesso!');
-            return redirect('/feed');
-        }
-        else{
+            header('Location: /feed');
+            return;
+        } else {
             FlashMessage::danger('Erro ao excluir pet!');
-            return redirect('/feed');
+            header('Location: /feed');
+            return;
         }
+    }
+
+    protected function view(string $viewName, array $data = []): void
+    {
+        $view = __DIR__ . '/../views/' . $viewName . '.phtml';
+        extract($data);
+        require __DIR__ . '/../views/layouts/application.phtml';
     }
 }
