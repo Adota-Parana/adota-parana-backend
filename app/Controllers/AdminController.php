@@ -9,10 +9,10 @@ use App\Models\User;
 
 class AdminController
 {
-    public function index(): string
+    public function index(): void
     {
         $users = User::all();
-        return $this->view('admin/index', ['users' => $users]);
+        $this->view('admin/index', ['users' => $users]);
     }
 
     public function usersDelete(Request $request)
@@ -29,13 +29,13 @@ class AdminController
             FlashMessage::danger('Não é possível deletar seu próprio usuário!');
         }
 
-        return header('Location: /admin/index');
+        return header('Location: /admin/dashboard');
     }
 
-    protected function view(string $path, array $data = []): string
+    protected function view(string $viewName, array $data = []): void
     {
+        $view = __DIR__ . '/../views/' . $viewName . '.php';
         extract($data);
-        $user = Auth::user();
-        return include __DIR__ . "/../views/{$path}.php";
+        require __DIR__ . '/../views/layouts/application.phtml';
     }
 }

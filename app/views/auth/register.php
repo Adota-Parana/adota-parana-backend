@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/../layouts/_header.php'; ?>
-
 <div class="container d-flex align-items-center justify-content-center vh-100">
     <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%; border-radius: 1rem;">
         <h3 class="text-center mb-4">Criar Conta</h3>
@@ -19,91 +17,95 @@
         <?php endif; ?>
 
         <form action="/register" method="POST" novalidate>
+            <!-- Nome -->
             <div class="mb-3">
                 <label for="name" class="form-label">Nome Completo</label>
                 <input 
                     type="text" 
-                    class="form-control <?= !empty($errors['name']) ? 'is-invalid' : '' ?>" 
+                    class="form-control <?= !empty($user->errors['name']) ? 'is-invalid' : '' ?>" 
                     id="name" 
                     name="name" 
                     placeholder="Seu Nome Completo" 
                     value="<?= htmlspecialchars($user->name ?? '') ?>"
                     required
                 >
-                <?php if (!empty($errors['name'])): ?>
+                <?php if (!empty($user->errors['name'])): ?>
                     <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['name']) ?>
+                        <?= htmlspecialchars($user->errors['name']) ?>
                     </div>
                 <?php endif; ?>
             </div>
 
+            <!-- Email -->
             <div class="mb-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input 
                     type="email" 
-                    class="form-control <?= !empty($errors['email']) ? 'is-invalid' : '' ?>" 
+                    class="form-control <?= !empty($user->errors['email']) ? 'is-invalid' : '' ?>" 
                     id="email" 
                     name="email" 
                     placeholder="seuemail@email.com" 
                     value="<?= htmlspecialchars($user->email ?? '') ?>"
                     required
                 >
-                <?php if (!empty($errors['email'])): ?>
+                <?php if (!empty($user->errors['email'])): ?>
                     <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['email']) ?>
+                        <?= htmlspecialchars($user->errors['email']) ?>
                     </div>
                 <?php endif; ?>
             </div>
 
-
+            <!-- Telefone -->
             <div class="mb-3">
-                <label for="phone" class="form-label">Phone</label>
+                <label for="phone" class="form-label">Telefone</label>
                 <input 
-                    type="number" 
-                    class="form-control <?= !empty($errors['phone']) ? 'is-invalid' : '' ?>" 
+                    type="tel" 
+                    class="form-control <?= !empty($user->errors['phone']) ? 'is-invalid' : '' ?>" 
                     id="phone" 
                     name="phone" 
                     placeholder="(99)9999-9999" 
                     value="<?= htmlspecialchars($user->phone ?? '') ?>"
                     required
                 >
-                <?php if (!empty($errors['phone'])): ?>
+                <?php if (!empty($user->errors['phone'])): ?>
                     <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['phone']) ?>
+                        <?= htmlspecialchars($user->errors['phone']) ?>
                     </div>
                 <?php endif; ?>
             </div>
 
+            <!-- Senha -->
             <div class="mb-3">
-                <label for="password" class="form-label">Senha</label>
+                <label for="encrypted_password" class="form-label">Senha</label>
                 <input 
                     type="password" 
-                    class="form-control <?= !empty($errors['password']) ? 'is-invalid' : '' ?>" 
+                    class="form-control <?= !empty($user->errors['encrypted_password']) ? 'is-invalid' : '' ?>" 
                     id="password" 
                     name="password" 
                     placeholder="••••••••" 
                     required
                 >
-                <?php if (!empty($errors['password'])): ?>
+                <?php if (!empty($user->errors['encrypted_password'])): ?>
                     <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['password']) ?>
+                        <?= htmlspecialchars($user->errors['encrypted_password']) ?>
                     </div>
                 <?php endif; ?>
             </div>
             
+            <!-- Confirmação de senha -->
             <div class="mb-3">
-                <label for="password_confirmation" class="form-label">Confirme a Senha</label>
+                <label for="encrypted_password" class="form-label">Confirme a Senha</label>
                 <input 
                     type="password" 
-                    class="form-control <?= !empty($errors['password_confirmation']) ? 'is-invalid' : '' ?>" 
+                    class="form-control <?= !empty($user->errors['password']) ? 'is-invalid' : '' ?>" 
                     id="password_confirmation" 
                     name="password_confirmation" 
                     placeholder="••••••••" 
                     required
                 >
-                <?php if (!empty($errors['password_confirmation'])): ?>
+                <?php if (!empty($user->errors['password'])): ?>
                     <div class="invalid-feedback">
-                        <?= htmlspecialchars($errors['password_confirmation']) ?>
+                        <?= htmlspecialchars($user->errors['password']) ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -117,4 +119,3 @@
     </div>
 </div>
 
-<?php require __DIR__ . '/../layouts/_footer.php'; ?>

@@ -9,89 +9,50 @@ use App\Models\User;
 
 class AuthController
 {
-    public function showRegistrationForm(Request $request): void
+    public function showRegistrationForm(): void
     {
-        require __DIR__ . '/../views/auth/register.php';
+        $this->view('auth/register');
     }
 
-public function register(Request $request)
-{
-
-    $name  = trim($request->getParam('name') ?? '');
-    $email = trim($request->getParam('email') ?? '');
-    $phone = trim($request->getParam('phone') ?? '');
-    $password = trim($request->getParam('password') ?? '');
-    $password_confirmation = trim($request->getParam('password_confirmation') ?? '');
-
-    $errors = [];
-
-    // Validação de nome
-    if (empty($name)) {
-        $errors['name'] = "O nome é obrigatório.";
-    }
-
-    // Validação de email
-    if (empty($email)) {
-        $errors['email'] = "O email é obrigatório.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors['email'] = "O email informado não é válido.";
-    } elseif (User::findByEmail($email)) {
-        $errors['email'] = "Este email já está em uso.";
-    }
-
-    // Validação de telefone
-    if (empty($phone)) {
-        $errors['phone'] = "O telefone é obrigatório.";
-    } elseif (!preg_match('/^\+?[0-9\s\-]{8,15}$/', $phone)) {
-        $errors['phone'] = "O telefone informado não é válido.";
-    }
-
-    // Validação de senha
-    if (empty($password)) {
-        $errors['password'] = "A senha é obrigatória.";
-    } elseif (strlen($password) < 6) {
-        $errors['password'] = "A senha deve ter pelo menos 6 caracteres.";
-    }
-
-    // Validação de confirmação de senha
-    if ($password !== $password_confirmation) {
-        $errors['password_confirmation'] = "A confirmação de senha não corresponde.";
-    }
-
-    // Se houver erros, retorna para o formulário com mensagens
-    if (!empty($errors)) {
+    public function register(Request $request)
+    {
         $user = new User();
-        $user->name = $name;
-        $user->email = $email;
-        $user->phone = $phone;
 
-        return $this->view('auth/register', [
-            'user'   => $user,
-            'errors' => $errors
-        ]);
+        // Popula os dados do form
+        $user->name = trim($request->getParam('name') ?? '');
+        $user->email = trim($request->getParam('email') ?? '');
+        $user->phone = trim($request->getParam('phone') ?? '');
+        $user->password = trim($request->getParam('password') ?? '');
+        $user->password_confirmation = trim($request->getParam('password_confirmation') ?? '');
+        $user->role = 'user';
+
+        // Valida o usuário
+        if (!$user->isValid()) {
+            // Se houver erros, retorna para o form
+            return $this->view('auth/register', [
+                'user' => $user,
+                'errors' => $user->errors
+            ]);
+        }
+
+        // Salva no banco
+        if ($user->save()) {
+            FlashMessage::success('Registro realizado com sucesso! Efetue o login.');
+            header('Location: /login');
+            exit;
+        } else {
+            FlashMessage::danger('Erro ao registrar usuário.');
+            return $this->view('auth/register', [
+                'user' => $user,
+                'errors' => $user->errors
+            ]);
+        }
     }
 
-    $user = new User();
-    $user->name = $name;
-    $user->email = $email;
-    $user->phone = $phone;
-    $user->password = $password;
-    $user->password_confirmation = $password_confirmation;
-    $user->role = 'user';
 
-    if ($user->save()) {
-        FlashMessage::success('Registro realizado com sucesso! Efetue o login.');
-        header('Location: /login');
-    } else {
-        $errors = $user->errors ?? FlashMessage::danger(implode("<br>", $errors));
-        header('Location: /register');
-    }
-}
-
-
-    public function showLoginForm(Request $request): void
+    public function showLoginForm(): void
     {
-     $this->view('auth/Login', ['title' => 'Login']);
+     $this->view('auth/login', ['title' => 'login']);
     }
 
     public function login(Request $request): void
@@ -123,7 +84,7 @@ public function register(Request $request)
         }
     }
 
-    public function logout(Request $request): void
+    public function logout(): void
     {
         Auth::logout();
         FlashMessage::success('Você saiu da sua conta.');

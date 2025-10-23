@@ -30,8 +30,19 @@ class User extends Model
         Validations::uniqueness('email', $this);
         Validations::uniqueness('phone', $this);
 
+        Validations::email('email', $this);
+        Validations::phone('phone', $this);
+
         if ($this->newRecord()) {
+            Validations::notEmpty('encrypted_password', $this);
             Validations::passwordConfirmation($this);
+        }
+    }
+
+    public function beforeSave(): void
+    {
+        if (!empty($this->password)) {
+            $this->encrypted_password = password_hash($this->password, PASSWORD_BCRYPT);
         }
     }
 
@@ -64,7 +75,7 @@ class User extends Model
         return User::findBy(['phone' => $phone]);
     }
 
-        public static function findById(int $id): ?static
+        public static function findById(int $id): ?static // Isso aqui ta errado, tem que pegar o findById do Model*
     {
         return User::findBy(['id' => $id]);
     }

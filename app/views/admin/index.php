@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/../layouts/_header.php'; ?>
-
 <div class="container mt-5">
     <h1 class="mb-4">Gerenciar Usuários</h1>
 
@@ -23,7 +21,7 @@
                     <td><?= htmlspecialchars($user->email) ?></td>
                     <td><?= $user->role ?></td>
                     <td>
-                        <form action="/admin/users/<?= $user->id ?>/delete" method="POST" style="display:inline;">
+                        <form action="/admin/users/delete/<?= $user->id ?>" method="POST" style="display:inline;">
                             <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
                         </form>
                     </td>
@@ -32,5 +30,3 @@
         </tbody>
     </table>
 </div>
-
-<?php require __DIR__ . '/../layouts/_footer.php'; ?>

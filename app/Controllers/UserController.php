@@ -8,9 +8,10 @@ use Lib\FlashMessage;
 
 class UserController
 {
-    public function index(): string
+    public function index(): void
     {     
-       return $this->view('user/dashboard');
+        $user = \App\Services\Auth::user();
+        $this->view('user/dashboard', ['user' => $user]);
     }
 
     public function edit()
@@ -23,60 +24,33 @@ class UserController
     public function update(Request $request)
     {
         $user = \App\Services\Auth::user();
-        // Pega os dados do POST
-        $name  = trim($request->post('name'));
-        $email = trim($request->post('email'));
-        $phone = trim($request->post('phone'));
 
-        $errors = [];
+        $user->name  = trim($request->post('name'));
+        $user->email = trim($request->post('email'));
+        $user->phone = trim($request->post('phone'));
 
-        // Validação de nome
-        if (empty($name)) {
-            $errors['name'] = "O nome é obrigatório.";
-        }
-
-        // Validação de email
-        if (empty($email)) {
-            $errors['email'] = "O email é obrigatório.";
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "O email informado não é válido.";
-        }
-
-        // Validação de telefone
-        if (empty($phone)) {
-            $errors['phone'] = "O telefone é obrigatório.";
-        } elseif (!preg_match('/^\+?[0-9\s\-]{8,15}$/', $phone)) {
-            $errors['phone'] = "O telefone informado não é válido.";
-        }
-
-        if (!empty($errors)) {
+        if (!$user->isValid()) {
             return $this->view('user/profile/edit', [
                 'user' => $user,
-                'errors' => $errors
+                'errors' => $user->errors
             ]);
         }
 
-        // Atualiza os dados
-        $user->name  = $name;
-        $user->email = $email;
-        $user->phone = $phone;
-
-
-    if ($user->save()) {
-        FlashMessage::success('Perfil atualizado!');
-        return $this->view('user/dashboard', ['user' => $user]);
-    } else {
-        FlashMessage::danger('Erro ao atualizar perfil!');
-        return $this->view('user/dashboard', ['user' => $user]);
-    }
+        if ($user->save()) {
+            FlashMessage::success('Perfil atualizado!');
+            return $this->view('user/dashboard', ['user' => $user]);
+        } else {
+            FlashMessage::danger('Erro ao atualizar perfil!');
+            return $this->view('user/dashboard', ['user' => $user]);
+        }
     }
 
 
 
-    protected function view(string $path, array $data = []): string
-    {
-        extract($data);
-        $user = \App\Services\Auth::user(); 
-        return include __DIR__ . "/../views/{$path}.php";
-    }
+    protected function view(string $viewName, array $data = []): void
+{
+    $view = __DIR__ . '/../views/' . $viewName . '.php';
+     extract($data);
+    require __DIR__ . '/../views/layouts/application.phtml';
+}
 }

@@ -1,4 +1,3 @@
-<?php require __DIR__ . '/../layouts/_header.php'; ?>
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -31,5 +30,3 @@
         <?php endforeach; ?>
     </div>
 </div>
-
-<?php require __DIR__ . '/../layouts/_footer.php'; ?>

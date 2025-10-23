@@ -1,5 +1,3 @@
-<?php require __DIR__ . '/../layouts/_header.php'; ?>
-
 <div class="container mt-5">
     <h1 class="mb-4">Painel do Usuário</h1>
 
@@ -20,4 +18,3 @@
     </div>
 </div>
 
-<?php require __DIR__ . '/../layouts/_footer.php'; ?>
