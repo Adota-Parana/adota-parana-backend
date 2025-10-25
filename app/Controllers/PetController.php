@@ -2,23 +2,22 @@
 
 namespace App\Controllers;
 
-use Core\Http\Request;
-use Core\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Services\Auth;
+use Core\Http\Request;
 use Lib\FlashMessage;
 
-class PetController extends Controller
+class PetController
 {
     public function index()
     {
         $pets = Pet::all();
-        return $this->render('home/feed', ['pets' => $pets]);
+        return view('/feed', ['pets' => $pets]);
     }
 
     public function create()
     {
-        return $this->render('/pets/create');
+        return view('/pets/create');
     }
 
     public function store(\Core\Http\Request $request)
@@ -30,8 +29,7 @@ class PetController extends Controller
             return redirect('/login');
         }
 
-
-        $pet = new Pet($_POST);
+        $pet = new Pet($request -> all());
         $pet->user_id = $user -> id;
         $pet->post_date = date('Y-m-d H:i:s');
         $pet->status = 'disponivel';
@@ -42,7 +40,7 @@ class PetController extends Controller
         }
         else{
             FlashMessage::danger('Erro ao cadastrar pet!');
-            return $this->render('/pets/create');
+            return view('/pets/create');
         }
     }
 
@@ -56,7 +54,7 @@ class PetController extends Controller
             return redirect('/feed');
         }
 
-        return $this->render('/pets/edit', ['pet' => $pet]);
+        return view('/pets/edit', ['pet' => $pet]);
     }
 
     public function update(\Core\Http\Request $request, int $id)
@@ -69,15 +67,15 @@ class PetController extends Controller
             return redirect('/feed');
         }
 
-        $pet->fill($_POST);
-        
+        $pet->fill($request->all());
+
         if($pet->save()){
             FlashMessage::success('Pet atualizado com sucesso!');
             return redirect('/feed');
         }
         else{
-            FlashMessage::danger('Erro ao atualizar pet!');
-            return $this->render('/pets/edit', ['pet' => $pet]);
+            FLashMessage::danger('Erro ao atualizar pet!');
+            return view('/pets/edit', ['pet' => $pet]);
         }
     }
 

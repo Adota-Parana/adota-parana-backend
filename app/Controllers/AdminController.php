@@ -14,7 +14,7 @@ class AdminController extends Controller
     public function index(): void
     {
         $users = User::all();
-        $this->view('admin/index', ['users' => $users]);
+        $this->render('admin/index', ['users' => $users]);
     }
 
     public function usersDelete(Request $request)
@@ -34,10 +34,4 @@ class AdminController extends Controller
         return header('Location: /admin/dashboard');
     }
 
-    protected function view(string $viewName, array $data = []): void
-    {
-        $view = __DIR__ . '/../views/' . $viewName . '.php';
-        extract($data);
-        require __DIR__ . '/../views/layouts/application.phtml';
-    }
 }
