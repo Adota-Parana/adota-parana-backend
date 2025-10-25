@@ -2,22 +2,23 @@
 
 namespace App\Controllers;
 
+use Core\Http\Request;
+use Core\Http\Controllers\Controller;
 use App\Models\Pet;
 use App\Services\Auth;
-use Core\Http\Request;
 use Lib\FlashMessage;
 
-class PetController
+class PetController extends Controller
 {
     public function index()
     {
         $pets = Pet::all();
-        return view('/feed', ['pets' => $pets]);
+        return $this->render('home/feed', ['pets' => $pets]);
     }
 
     public function create()
     {
-        return view('/pets/create');
+        return $this->render('/pets/create');
     }
 
     public function store(\Core\Http\Request $request)
@@ -29,7 +30,8 @@ class PetController
             return redirect('/login');
         }
 
-        $pet = new Pet($request -> all());
+
+        $pet = new Pet($_POST);
         $pet->user_id = $user -> id;
         $pet->post_date = date('Y-m-d H:i:s');
         $pet->status = 'disponivel';
@@ -40,7 +42,7 @@ class PetController
         }
         else{
             FlashMessage::danger('Erro ao cadastrar pet!');
-            return view('/pets/create');
+            return $this->render('/pets/create');
         }
     }
 
@@ -54,7 +56,7 @@ class PetController
             return redirect('/feed');
         }
 
-        return view('/pets/edit', ['pet' => $pet]);
+        return $this->render('/pets/edit', ['pet' => $pet]);
     }
 
     public function update(\Core\Http\Request $request, int $id)
@@ -67,15 +69,15 @@ class PetController
             return redirect('/feed');
         }
 
-        $pet->fill($request->all());
-
+        $pet->fill($_POST);
+        
         if($pet->save()){
             FlashMessage::success('Pet atualizado com sucesso!');
             return redirect('/feed');
         }
         else{
-            FLashMessage::danger('Erro ao atualizar pet!');
-            return view('/pets/edit', ['pet' => $pet]);
+            FlashMessage::danger('Erro ao atualizar pet!');
+            return $this->render('/pets/edit', ['pet' => $pet]);
         }
     }
 

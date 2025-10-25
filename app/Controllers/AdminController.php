@@ -3,11 +3,13 @@
 namespace App\Controllers;
 
 use Core\Http\Request;
+use Core\Http\Controllers\Controller;
 use App\Services\Auth;
-use Lib\FlashMessage;
 use App\Models\User;
+use Lib\FlashMessage;
 
-class AdminController
+
+class AdminController extends Controller
 {
     public function index(): void
     {
