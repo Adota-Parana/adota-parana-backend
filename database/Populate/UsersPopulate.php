@@ -12,9 +12,9 @@ class UsersPopulate
         $adminData = [
             'name' => 'admin',
             'email' => 'admin@gmail.com',
-            'password' => '123456',
-            'password_confirmation' => '123456',
-            'phone' => '123456789', 
+            'password' => '123',
+            'password_confirmation' => '123',
+            'phone' => '4299999999', 
             'role' => 'admin',
         ];
 
@@ -22,7 +22,7 @@ class UsersPopulate
         $admin->save();
 
         // Usuários comuns
-        $numberOfUsers = 10;
+        $numberOfUsers = 50;
 
         for ($i = 1; $i <= $numberOfUsers; $i++) {
             $userData = [
