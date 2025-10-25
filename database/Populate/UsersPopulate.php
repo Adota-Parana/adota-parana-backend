@@ -8,34 +8,36 @@ class UsersPopulate
 {
     public static function populate()
     {
-        $data =  [
+        // Usuário admin
+        $adminData = [
             'name' => 'admin',
             'email' => 'admin@gmail.com',
             'password' => '123456',
             'password_confirmation' => '123456',
             'phone' => '123456789', 
-            'role' => 'user'
+            'role' => 'admin',
         ];
 
-        $user = new User($data);
-        $user->save();
+        $admin = new User($adminData);
+        $admin->save();
 
+        // Usuários comuns
         $numberOfUsers = 10;
 
-        for ($i = 1; $i < $numberOfUsers; $i++) {
-            $data =  [
+        for ($i = 1; $i <= $numberOfUsers; $i++) {
+            $userData = [
                 'name' => 'Fulano ' . $i,
                 'email' => 'fulano' . $i . '@example.com',
                 'password' => '123',
                 'password_confirmation' => '123',
-                'phone' => '123456789',
-                'role' => 'user'
+                'phone' => '12345678' . str_pad($i, 2, '0', STR_PAD_LEFT), 
+                'role' => 'user', 
             ];
 
-            $user = new User($data);
+            $user = new User($userData);
             $user->save();
         }
 
-        echo "Users populated with $numberOfUsers registers\n";
+        echo "Users populated with " . ($numberOfUsers + 1) . " registers\n";
     }
 }
