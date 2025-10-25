@@ -3,15 +3,16 @@
 namespace App\Controllers;
 
 use Core\Http\Request;
+use Core\Http\Controllers\Controller;
 use App\Services\Auth;
-use Lib\FlashMessage;
 use App\Models\User;
+use Lib\FlashMessage;
 
-class AuthController
+class AuthenticationsController extends Controller
 {
     public function showRegistrationForm(): void
     {
-        $this->view('auth/register');
+        $this->render('auth/register');
     }
 
     public function register(Request $request)
@@ -26,9 +27,7 @@ class AuthController
         $user->password_confirmation = trim($request->getParam('password_confirmation') ?? '');
         $user->role = 'user';
 
-        // Valida o usuário
         if (!$user->isValid()) {
-            // Se houver erros, retorna para o form
             return $this->view('auth/register', [
                 'user' => $user,
                 'errors' => $user->errors
@@ -52,7 +51,7 @@ class AuthController
 
     public function showLoginForm(): void
     {
-     $this->view('auth/login', ['title' => 'login']);
+        $this->render('auth/login');
     }
 
     public function login(Request $request): void
@@ -92,10 +91,4 @@ class AuthController
         exit;
     }
 
-    protected function view(string $viewName, array $data = []): void
-{
-    $view = __DIR__ . '/../views/' . $viewName . '.php';
-    extract($data);
-    require __DIR__ . '/../views/layouts/application.phtml';
-}
 }
