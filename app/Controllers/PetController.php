@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\Specie;
 use App\Models\Pet;
 use App\Services\Auth;
 use Core\Http\Request;
@@ -12,15 +13,24 @@ class PetController
     public function index()
     {
         $pets = Pet::all();
-        $this->view('home/feed', ['pets' => $pets]);
+        $currentUser = Auth::user();
+        $this->view('home/feed', [
+            'pets' => $pets,
+            'currentUser' => $currentUser
+        ]);
     }
 
     public function create()
     {
-        $this->view('pets/create');
+        $species = Specie::all();
+        $this->view('pets/create', [
+            'species' => $species,
+            'pet' => new Pet(),
+            'errors' => []
+        ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         $user = Auth::user();
 
@@ -30,80 +40,115 @@ class PetController
             return;
         }
 
-        $pet = Pet::all();
+        $pet = new Pet();
+        $data = $_POST;
+
+        $pet->name = $data['name'] ?? null;
+        $pet->specie_id = $data['specie_id'] ?? null;
+        $pet->birth_date = empty($data['birth_date']) ? null : $data['birth_date'];
+        $pet->sex = $data['sex'] ?? null;
+        $pet->is_vaccinated = $data['is_vaccinated'] ?? 0;
+        $pet->is_neutered = $data['is_neutered'] ?? 0;
+        $pet->description = $data['description'] ?? null;
         $pet->user_id = $user->id;
         $pet->post_date = date('Y-m-d H:i:s');
-        $pet->status = 'disponivel';
+        $pet->status = 'disponível';
 
         if ($pet->save()) {
             FlashMessage::success('Pet cadastrado com sucesso!');
             header('Location: /feed');
             return;
         } else {
-            FlashMessage::danger('Erro ao cadastrar pet!');
-            $this->view('pets/create');
-            return;
+            FlashMessage::danger('Erro ao cadastrar pet! Verifique os dados.');
+            $this->view('pets/create', [
+                'pet' => $pet,
+                'errors' => $pet->errors,
+                'species' => Specie::all()
+            ]);
         }
     }
 
-    public function edit(int $id)
+    public function edit(Request $request): void
     {
-        $pet = Pet::find($id);
+        $id = (int) $request->getParam('id');
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
-        if (!$user || $user->id !== $pet->user_id) {
+        if (!$this->isOwner($user, $pet)) {
             FlashMessage::danger('Você não tem permissão para editar este pet!');
             header('Location: /feed');
             return;
         }
 
-        $this->view('pets/edit', ['pet' => $pet]);
+        $this->view('pets/edit', ['pet' => $pet, 'species' => Specie::all()]);
     }
 
-    public function update(Request $request, int $id)
+    public function update(Request $request): void
     {
-        $pet = Pet::find($id);
+        $id = (int) $request->getParam('id');
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
-        if (!$user || $user->id !== $pet->user_id) {
+        if (!$this->isOwner($user, $pet)) {
             FlashMessage::danger('Você não tem permissão para editar este pet!');
             header('Location: /feed');
             return;
         }
 
-        $pet->fill($request->all());
+        $data = $_POST;
+
+        $pet->name = $data['name'] ?? $pet->name;
+        $pet->specie_id = $data['specie_id'] ?? $pet->specie_id;
+        $pet->birth_date = empty($data['birth_date']) ? $pet->birth_date : $data['birth_date'];
+        $pet->sex = $data['sex'] ?? $pet->sex;
+        $pet->is_vaccinated = $data['is_vaccinated'] ?? 0;
+        $pet->is_neutered = $data['is_neutered'] ?? 0;
+        $pet->description = $data['description'] ?? $pet->description;
 
         if ($pet->save()) {
             FlashMessage::success('Pet atualizado com sucesso!');
             header('Location: /feed');
             return;
-        } else {
-            FlashMessage::danger('Erro ao atualizar pet!');
-            $this->view('pets/edit', ['pet' => $pet]);
-            return;
         }
+        $this->view('pets/edit', [
+            'pet' => $pet,
+            'errors' => $pet->errors,
+            'species' => Specie::all()
+        ]);
+    }
+    private function isOwner(?object $user, ?object $pet): bool
+    {
+        if (!$user || !$pet) {
+            return false;
+        }
+
+        if ($user->role == 'admin') {
+            return true;
+        }
+
+        return $user->id === $pet->user_id;
     }
 
-    public function destroy(int $id)
+    public function destroy(Request $request): void
     {
-        $pet = Pet::find($id);
+        $id = (int) $request->getParam('id');
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
-        if (!$user || $user->id !== $pet->user_id) {
+        if (!$this->isOwner($user, $pet)) {
             FlashMessage::danger('Você não tem permissão para excluir este pet!');
             header('Location: /feed');
             return;
         }
 
-        if ($pet->delete()) {
+        if ($pet->destroy()) {
             FlashMessage::success('Pet excluído com sucesso!');
-            header('Location: /feed');
-            return;
-        } else {
+        } 
+        else {
             FlashMessage::danger('Erro ao excluir pet!');
-            header('Location: /feed');
-            return;
         }
+
+        header('Location: /feed');
     }
 
     protected function view(string $viewName, array $data = []): void
@@ -112,4 +157,5 @@ class PetController
         extract($data);
         require __DIR__ . '/../views/layouts/application.phtml';
     }
+
 }

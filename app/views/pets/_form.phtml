@@ -1,0 +1,88 @@
+<?php
+// Define os valores padrão para evitar erros de 'undefined variable'
+$petName = $pet->name ?? '';
+$specieId = $pet->specie_id ?? '';
+$birthDate = $pet->birth_date ?? '';
+$sex = $pet->sex ?? '';
+$isVaccinated = $pet->is_vaccinated ?? false;
+$isNeutered = $pet->is_neutered ?? false;
+$description = $pet->description ?? '';
+?>
+
+<div class="mb-3">
+    <label for="name" class="form-label">Nome do Pet</label>
+    <input type="text" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?>" id="name" name="name" value="<?= htmlspecialchars($petName) ?>" required>
+    <?php if (isset($errors['name'])) : ?>
+        <div class="invalid-feedback"><?= $errors['name'] ?></div>
+    <?php endif; ?>
+</div>
+
+<div class="mb-3">
+    <label for="specie_id" class="form-label">Espécie</label>
+    <select class="form-select <?= isset($errors['specie_id']) ? 'is-invalid' : '' ?>" id="specie_id" name="specie_id" required>
+        <option value="">Selecione a espécie</option>
+        <?php foreach ($species as $specie) : ?>
+            <option value="<?= $specie->id ?>" <?= ($specieId == $specie->id) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($specie->name) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <?php if (isset($errors['specie_id'])) : ?>
+        <div class="invalid-feedback"><?= $errors['specie_id'] ?></div>
+    <?php endif; ?>
+</div>
+
+<div class="mb-3">
+    <label for="birth_date" class="form-label">Data de Nascimento (aproximada)</label>
+    <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?= htmlspecialchars($birthDate) ?>">
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Sexo</label>
+    <div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="sex" id="sex_m" value="M" <?= ($sex === 'M') ? 'checked' : '' ?>>
+            <label class="form-check-label" for="sex_m">Macho</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="sex" id="sex_f" value="F" <?= ($sex === 'F') ? 'checked' : '' ?>>
+            <label class="form-check-label" for="sex_f">Fêmea</label>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <div class="form-check">
+        <input class="form-check-input" type="hidden" name="is_vaccinated" value="0">
+        <input class="form-check-input" type="checkbox" name="is_vaccinated" id="is_vaccinated" value="1" <?= $isVaccinated ? 'checked' : '' ?>>
+        <label class="form-check-label" for="is_vaccinated">
+            Vacinado
+        </label>
+    </div>
+</div>
+
+<div class="mb-3">
+    <div class="form-check">
+        <input class="form-check-input" type="hidden" name="is_neutered" value="0">
+        <input class="form-check-input" type="checkbox" name="is_neutered" id="is_neutered" value="1" <?= $isNeutered ? 'checked' : '' ?>>
+        <label class="form-check-label" for="is_neutered">
+            Castrado
+        </label>
+    </div>
+</div>
+
+<div class="mb-3">
+    <label for="description" class="form-label">Descrição</label>
+    <textarea class="form-control" id="description" name="description" rows="4"><?= htmlspecialchars($description) ?></textarea>
+</div>
+
+<!-- 
+<div class="mb-3">
+    <label for="images" class="form-label">Fotos do Pet</label>
+    <input type="file" class="form-control" id="images" name="images[]" multiple>
+    <div class="form-text">Você pode selecionar várias imagens.</div>
+</div>
+-->
+
+<button type="submit" class="btn btn-primary"><?= $buttonText ?? 'Salvar' ?></button>
+<a href="/feed" class="btn btn-secondary">Cancelar</a>

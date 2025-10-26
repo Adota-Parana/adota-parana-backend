@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use Core\Http\Request;
-use App\Services\Auth;
-use Lib\FlashMessage;
 use App\Models\User;
+use PDOException;
+use Lib\FlashMessage;
 
 class AdminController
 {
@@ -15,31 +15,33 @@ class AdminController
         $this->view('admin/index', ['users' => $users]);
     }
 
-    public function usersDelete(Request $request, int $id)
+    public function usersDelete(Request $request): void
     {
-        $userToDelete = User::find($id);
-        $currentUser = Auth::user();
+        $id = (int) $request->getParam('id');
+        $user = User::findById($id);
 
-        if (!$userToDelete) {
+        if (!$user) {
             FlashMessage::danger('Usuário não encontrado.');
             header('Location: /admin/dashboard');
-            return;
+            exit;
         }
 
-        if ($userToDelete->id === $currentUser->id) {
-            FlashMessage::danger('Você não pode excluir seu próprio usuário.');
-            header('Location: /admin/dashboard');
-            return;
-        }
-
-        if ($userToDelete->delete()) {
-            FlashMessage::success('Usuário excluído com sucesso!');
-        } else {
-            FlashMessage::danger('Ocorreu um erro ao excluir o usuário.');
+        try {
+            $user->destroy();
+            FlashMessage::success('Usuário removido com sucesso.');
+        } 
+        catch (PDOException $e) {
+            // Foreign key violation (cannot delete parent while children exist)
+            if ((int)$e->getCode() === 23000 || stripos($e->getMessage(), '1451') !== false) {
+                FlashMessage::danger('Não é possível excluir usuário: existem pets vinculados. Remova ou transfira os pets antes.');
+            } 
+            else {
+                FlashMessage::danger('Erro ao remover usuário.');
+            }
         }
 
         header('Location: /admin/dashboard');
-        return;
+        exit;
     }
 
     protected function view(string $viewName, array $data = []): void

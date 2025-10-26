@@ -1,8 +1,3 @@
-GRANT ALL PRIVILEGES ON adota_parana.* TO 'adota_user'@'%';
-GRANT ALL PRIVILEGES ON adota_parana_test.* TO 'adota_user'@'%';
-FLUSH PRIVILEGES;
-
-CREATE DATABASE IF NOT EXISTS `adota_parana`; 
 USE `adota_parana`;
 
 SET foreign_key_checks = 0;
@@ -32,6 +27,12 @@ CREATE TABLE `species` (
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 );
+
+INSERT INTO `species` (`name`) VALUES
+('Cachorro'),
+('Gato'),
+('Pássaro'),
+('Outro');
 
 CREATE TABLE `pets` (
   `id` INT NOT NULL AUTO_INCREMENT,
@@ -99,7 +100,6 @@ SET foreign_key_checks = 1;
 
 -- ========================= Banco de teste =========================
 
-CREATE DATABASE IF NOT EXISTS `adota_parana_test`; 
 USE `adota_parana_test`;
 
 DROP TABLE IF EXISTS `users`;

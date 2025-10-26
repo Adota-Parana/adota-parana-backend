@@ -17,9 +17,10 @@
 
                         <?php if ($currentUser && ($currentUser->id === $pet->user_id || $currentUser->isAdmin())):
                          ?>
-                            <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-secondary">Editar</a>
-                            <form action="/pets/<?= $pet->id ?>/delete" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger">Excluir</button>
+                            <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-sm btn-secondary">Editar</a>
+                            <form action="/pets/<?= $pet->id ?>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este pet?');">
+                                <input type="hidden" name="_method" value="DELETE">
+                                <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
                             </form>
                         <?php endif; ?>
 
@@ -29,5 +30,3 @@
         <?php endforeach; ?>
     </div>
 </div>
-
-<?php require __DIR__ . '/../layouts/_footer.phtml'; ?>

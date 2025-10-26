@@ -33,12 +33,14 @@ Route::middleware('auth')->group(function() {
     Route::post('/user/profile/update', [UserController::class, 'update']);
 
     Route::get('/feed', [PetController::class, 'index'])->name('feed');
+    
     Route::get('/pets/create', [PetController::class, 'create']);
 
     Route::post('/pets', [PetController::class, 'store']);
 
     Route::get('/pets/{id}/edit', [PetController::class, 'edit']);
+    
     Route::post('/pets/{id}/update', [PetController::class, 'update']);
     
-    Route::post('/pets/{id}/delete', [PetController::class, 'destroy']);
+    Route::delete('/pets/{id}/delete', [PetController::class, 'destroy']);
 });
