@@ -6,13 +6,14 @@ use Core\Http\Request;
 use App\Models\User;
 use PDOException;
 use Lib\FlashMessage;
+use Core\Http\Controllers\Controller;
 
-class AdminController
+class AdminController extends Controller
 {
     public function index()
     {
         $users = User::all();
-        $this->view('admin/index', ['users' => $users]);
+        $this->render('admin/index', ['users' => $users]);
     }
 
     public function usersDelete(Request $request): void
@@ -42,12 +43,5 @@ class AdminController
 
         header('Location: /admin/dashboard');
         exit;
-    }
-
-    protected function view(string $viewName, array $data = []): void
-    {
-        $view = __DIR__ . '/../views/' . $viewName . '.phtml';
-        extract($data);
-        require __DIR__ . '/../views/layouts/application.phtml';
     }
 }

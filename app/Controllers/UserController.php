@@ -5,19 +5,20 @@ namespace App\Controllers;
 use Core\Http\Request;
 use App\Services\Auth;
 use Lib\FlashMessage;
+use Core\Http\Controllers\Controller;
 
-class UserController
+class UserController extends Controller
 {
     public function index(): string
     {     
-       return $this->view('user/dashboard');
+       return $this->render('user/dashboard');
     }
 
     public function edit()
     {
         $user = \App\Services\Auth::user();
 
-        return $this->view('user/profile/edit', ['user' => $user]);
+        return $this->render('user/profile/edit', ['user' => $user]);
     }
 
     public function update(Request $request)
@@ -50,7 +51,7 @@ class UserController
         }
 
         if (!empty($errors)) {
-            return $this->view('user/profile/edit', [
+            return $this->render('user/profile/edit', [
                 'user' => $user,
                 'errors' => $errors
             ]);
@@ -62,21 +63,13 @@ class UserController
         $user->phone = $phone;
 
 
-    if ($user->save()) {
-        FlashMessage::success('Perfil atualizado!');
-        return $this->view('user/dashboard', ['user' => $user]);
-    } else {
-        FlashMessage::danger('Erro ao atualizar perfil!');
-        return $this->view('user/dashboard', ['user' => $user]);
-    }
-    }
-
-
-
-    protected function view(string $path, array $data = []): string
-    {
-        extract($data);
-        $user = \App\Services\Auth::user(); 
-        return include __DIR__ . "/../views/{$path}.phtml";
+        if ($user->save()) {
+            FlashMessage::success('Perfil atualizado!');
+            return $this->render('user/dashboard', ['user' => $user]);
+        } 
+        else {
+            FlashMessage::danger('Erro ao atualizar perfil!');
+            return $this->render('user/dashboard', ['user' => $user]);
+        }
     }
 }

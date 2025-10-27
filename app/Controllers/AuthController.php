@@ -6,12 +6,13 @@ use Core\Http\Request;
 use App\Services\Auth;
 use Lib\FlashMessage;
 use App\Models\User;
+use Core\Http\Controllers\Controller;
 
-class AuthController
+class AuthController extends Controller
 {
     public function showRegistrationForm(Request $request): void
     {
-        $this->view('auth/register');
+        $this->render('auth/register');
     }
 
 public function register(Request $request)
@@ -65,7 +66,7 @@ public function register(Request $request)
         $user->email = $email;
         $user->phone = $phone;
 
-        return $this->view('auth/register', [
+        return $this->render('auth/register', [
             'user'   => $user,
             'errors' => $errors
         ]);
@@ -91,7 +92,7 @@ public function register(Request $request)
 
     public function showLoginForm(Request $request): void
     {
-     $this->view('auth/login', ['title' => 'login']);
+     $this->render('auth/login', ['title' => 'login']);
     }
 
     public function login(Request $request): void
@@ -130,11 +131,4 @@ public function register(Request $request)
         header('Location: /');
         exit;
     }
-
-    protected function view(string $viewName, array $data = []): void
-{
-    $view = __DIR__ . '/../views/' . $viewName . '.phtml';
-    extract($data);
-    require __DIR__ . '/../views/layouts/application.phtml';
-}
 }

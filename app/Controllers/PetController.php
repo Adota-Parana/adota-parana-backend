@@ -7,14 +7,15 @@ use App\Models\Pet;
 use App\Services\Auth;
 use Core\Http\Request;
 use Lib\FlashMessage;
+use Core\Http\Controllers\Controller;
 
-class PetController
+class PetController extends Controller
 {
     public function index()
     {
         $pets = Pet::all();
         $currentUser = Auth::user();
-        $this->view('home/feed', [
+        $this->render('home/feed', [
             'pets' => $pets,
             'currentUser' => $currentUser
         ]);
@@ -23,7 +24,7 @@ class PetController
     public function create()
     {
         $species = Specie::all();
-        $this->view('pets/create', [
+        $this->render('pets/create', [
             'species' => $species,
             'pet' => new Pet(),
             'errors' => []
@@ -60,7 +61,7 @@ class PetController
             return;
         } else {
             FlashMessage::danger('Erro ao cadastrar pet! Verifique os dados.');
-            $this->view('pets/create', [
+            $this->render('pets/create', [
                 'pet' => $pet,
                 'errors' => $pet->errors,
                 'species' => Specie::all()
@@ -80,7 +81,7 @@ class PetController
             return;
         }
 
-        $this->view('pets/edit', ['pet' => $pet, 'species' => Specie::all()]);
+        $this->render('pets/edit', ['pet' => $pet, 'species' => Specie::all()]);
     }
 
     public function update(Request $request): void
@@ -110,7 +111,7 @@ class PetController
             header('Location: /feed');
             return;
         }
-        $this->view('pets/edit', [
+        $this->render('pets/edit', [
             'pet' => $pet,
             'errors' => $pet->errors,
             'species' => Specie::all()
@@ -149,13 +150,6 @@ class PetController
         }
 
         header('Location: /feed');
-    }
-
-    protected function view(string $viewName, array $data = []): void
-    {
-        $view = __DIR__ . '/../views/' . $viewName . '.phtml';
-        extract($data);
-        require __DIR__ . '/../views/layouts/application.phtml';
     }
 
 }
