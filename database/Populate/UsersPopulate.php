@@ -8,18 +8,31 @@ class UsersPopulate
 {
     public static function populate()
     {
+        // Função auxiliar para criar o usuário
+        $createUser = function ($data) {
+            $user = new User();
+
+            $user->name  = $data['name'];
+            $user->email = $data['email'];
+            $user->phone = $data['phone'];
+            $user->role  = $data['role'];
+
+            // Criptografando a senha
+            $user->encrypted_password = password_hash($data['password'], PASSWORD_DEFAULT);
+
+            $user->save();
+        };
+
         // Usuário admin
         $adminData = [
             'name' => 'admin',
             'email' => 'admin@gmail.com',
-            'password' => '123',
-            'password_confirmation' => '123',
+            'password' => '123', // será criptografada
             'phone' => '4299999999', 
             'role' => 'admin',
         ];
 
-        $admin = new User($adminData);
-        $admin->save();
+        $createUser($adminData);
 
         // Usuários comuns
         $numberOfUsers = 50;
@@ -28,14 +41,12 @@ class UsersPopulate
             $userData = [
                 'name' => 'Fulano ' . $i,
                 'email' => 'fulano' . $i . '@example.com',
-                'password' => '123',
-                'password_confirmation' => '123',
+                'password' => '123', // será criptografada
                 'phone' => '12345678' . str_pad($i, 2, '0', STR_PAD_LEFT), 
                 'role' => 'user', 
             ];
 
-            $user = new User($userData);
-            $user->save();
+            $createUser($userData);
         }
 
         echo "Users populated with " . ($numberOfUsers + 1) . " registers\n";

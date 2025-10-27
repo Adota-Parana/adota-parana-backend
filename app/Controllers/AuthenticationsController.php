@@ -23,12 +23,19 @@ class AuthenticationsController extends Controller
         $user->name = trim($request->getParam('name') ?? '');
         $user->email = trim($request->getParam('email') ?? '');
         $user->phone = trim($request->getParam('phone') ?? '');
-        $user->password = trim($request->getParam('password') ?? '');
-        $user->password_confirmation = trim($request->getParam('password_confirmation') ?? '');
+        // Senha e confirmação (para validação)
+        $password = trim($request->getParam('password') ?? '');
+        $passwordConfirmation = trim($request->getParam('password_confirmation') ?? '');
+
+        $user->password = $password;
+        $user->password_confirmation = $passwordConfirmation;
+
+        // Criptografa a senha para salvar no banco
+        $user->encrypted_password = password_hash($password, PASSWORD_DEFAULT);
         $user->role = 'user';
 
         if (!$user->isValid()) {
-            return $this->view('auth/register', [
+            return $this->render('auth/register', [
                 'user' => $user,
                 'errors' => $user->errors
             ]);
@@ -41,7 +48,7 @@ class AuthenticationsController extends Controller
             exit;
         } else {
             FlashMessage::danger('Erro ao registrar usuário.');
-            return $this->view('auth/register', [
+            return $this->render('auth/register', [
                 'user' => $user,
                 'errors' => $user->errors
             ]);

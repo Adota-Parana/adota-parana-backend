@@ -28,7 +28,7 @@ Route::post('/logout', [AuthenticationsController::class, 'logout']);
 Route::middleware('admin')->group(function() {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/dashboard/{page}', [AdminController::class, 'index'])->name('admin.paginated');
-    Route::post('/admin/users/delete', [AdminController::class, 'usersDelete'])->name('admin.users.delete');
+    Route::post('/admin/users/delete/{id}', [AdminController::class, 'usersDelete'])->name('admin.users.delete');
 });
 
 // User and Pet routes

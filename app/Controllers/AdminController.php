@@ -33,7 +33,7 @@ class AdminController extends Controller
     public function usersDelete(Request $request)
     {
         $id = (int) $request->getParam('id');
-        $userToDelete = User::findBy(['id' => $id]);
+        $userToDelete = User::findById($id);
 
         if ($userToDelete && $userToDelete->id != Auth::user()->id) {
             $userToDelete->destroy();
@@ -42,6 +42,6 @@ class AdminController extends Controller
             FlashMessage::danger('Não é possível deletar seu próprio usuário!');
         }
 
-        $this->redirect('/admin/dashboard');
+        $this->redirectTo('/admin/dashboard');
     }
 }
