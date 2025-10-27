@@ -13,4 +13,3 @@ use Core\Router\Router;
 ErrorsHandler::init();
 EnvLoader::init();
 Router::init();
-

@@ -1,0 +1,20 @@
+<div class="container mt-5">
+    <h1 class="mb-4">Painel do Usuário</h1>
+
+    <?php require __DIR__ . '/../layouts/_flash_message.phtml'; ?>
+
+    <p>Bem-vindo ao seu painel, <?= htmlspecialchars($currentUser->name) ?>!</p>
+    
+    <div class="list-group">
+        <a href="/user/profile" class="list-group-item list-group-item-action">
+            Meu Perfil
+        </a>
+        <a href="/pets/create" class="list-group-item list-group-item-action">
+            Adicionar um Novo Pet
+        </a>
+        <a href="/feed" class="list-group-item list-group-item-action">
+            Ver Pets para Adoção
+        </a>
+    </div>
+</div>
+

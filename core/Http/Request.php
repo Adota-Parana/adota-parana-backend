@@ -58,4 +58,10 @@ class Request
     {
         return $this->params[$key] ?? $default;
     }
+
+    // Método para pegar dados exclusivamente via POST
+    public function post(string $key, mixed $default = null): mixed
+    {
+        return $_POST[$key] ?? $default;
+    }
 }

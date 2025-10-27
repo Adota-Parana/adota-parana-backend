@@ -3,34 +3,45 @@
 namespace App\Controllers;
 
 use Core\Http\Request;
+use Core\Http\Controllers\Controller;
 use App\Services\Auth;
-use Lib\FlashMessage;
 use App\Models\User;
+use Lib\FlashMessage;
 
-class AdminController
+class AdminController extends Controller
 {
-
-    public function index(Request $request):string
+    public function index(Request $request): void
     {
-        $stats = [
-            'users' => 120,
-            'animals' => 40,
-        ];
+        $page = (int) $request->getParam('page', 1);
+        
+        $paginator = User::paginate(
+            route: 'admin.paginated',
+            page: $page,
+            per_page: 10
+        );
+        
+        $users = $paginator->registers();
 
-        return $this->view('admin/Dashboard', compact('stats'));
+        if ($request->acceptJson()) {
+            $this->renderJson('index', compact('paginator', 'users'));
+        } else {
+            $this->render('admin/index', compact('paginator', 'users'));
+        }
     }
 
-    public function users(Request $request):string
-    {
-        $users = \App\Models\User::all();
 
-        return $this->view('admin/users', compact('users'));
-    }
-
-    protected function view(string $path, array $data = []): string
+    public function usersDelete(Request $request)
     {
-        extract($data); // transforma array em variáveis
-        $user = \App\Services\Auth::user(); // usuário logado, se quiser disponível
-        return include __DIR__ . "/../views/{$path}.php";
+        $id = (int) $request->getParam('id');
+        $userToDelete = User::findById($id);
+
+        if ($userToDelete && $userToDelete->id != Auth::user()->id) {
+            $userToDelete->destroy();
+            FlashMessage::success('Usuário deletado com sucesso!');
+        } else {
+            FlashMessage::danger('Não é possível deletar seu próprio usuário!');
+        }
+
+        $this->redirectTo('/admin/dashboard');
     }
 }
