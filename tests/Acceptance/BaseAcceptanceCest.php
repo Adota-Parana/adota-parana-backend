@@ -10,6 +10,7 @@ class BaseAcceptanceCest
 {
     public function _before(AcceptanceTester $page): void
     {
+        sleep(30);
         EnvLoader::init();
         Database::create();
         Database::migrate();
