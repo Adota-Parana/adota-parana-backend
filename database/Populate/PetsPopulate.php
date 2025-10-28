@@ -19,46 +19,16 @@ class PetsPopulate
             return;
         }
 
-        $pets = [
-            [
-                'name' => 'Rex',
-                'description' => 'Um cão amigável e brincalhão.',
-                'age' => 3,
-                'adopted' => false,
-            ],
-            [
-                'name' => 'Miau',
-                'description' => 'Um gato curioso e independente.',
-                'age' => 2,
-                'adopted' => false,
-            ],
-            [
-                'name' => 'Piu',
-                'description' => 'Um pássaro cantor e alegre.',
-                'age' => 1,
-                'adopted' => true,
-            ],
-            [
-                'name' => 'Nemo',
-                'description' => 'Um peixe colorido e tranquilo.',
-                'age' => 1,
-                'adopted' => false,
-            ],
-            [
-                'name' => 'Bolinha',
-                'description' => 'Um hamster fofo e ativo.',
-                'age' => 1,
-                'adopted' => false,
-            ],
-        ];
+        $petNames = ['Max', 'Bella', 'Charlie', 'Lucy', 'Cooper', 'Daisy', 'Rocky', 'Luna', 'Milo', 'Sadie'];
+        $descriptions = ['Amigável e brincalhão', 'Curioso e independente', 'Leal e protetor', 'Calmo e carinhoso', 'Energético e divertido'];
 
-        foreach ($pets as $petData) {
+        for ($i = 0; $i < 50; $i++) {
             try {
                 $pet = new Pet();
-                $pet->name = $petData['name'];
-                $pet->description = $petData['description'];
-                $pet->birth_date = date('Y-m-d', strtotime("-{$petData['age']} years"));
-                $pet->status = $petData['adopted'] ? 'ADOPTED' : 'AVAILABLE';
+                $pet->name = $petNames[array_rand($petNames)];
+                $pet->description = $descriptions[array_rand($descriptions)];
+                $pet->birth_date = date('Y-m-d', strtotime("-" . rand(1, 10) . " years"));
+                $pet->status = ['AVAILABLE', 'ADOPTED'][array_rand(['AVAILABLE', 'ADOPTED'])];
                 $pet->specie_id = $species[array_rand($species)]->id;
                 $pet->user_id = $users[array_rand($users)]->id;
                 $pet->sex = ['M', 'F'][array_rand(['M', 'F'])];
@@ -67,7 +37,7 @@ class PetsPopulate
                 $pet->post_date = date('Y-m-d H:i:s');
                 $pet->save();
             } catch (PDOException $e) {
-                if ($e->getCode() !== '23000') {
+                if ($e->getCode() !== '23000') { // 23000 is for integrity constraint violation
                     throw $e;
                 }
             }

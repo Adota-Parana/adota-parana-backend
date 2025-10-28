@@ -48,6 +48,7 @@ services:
   selenium:
     image: selenium/standalone-chrome-debug:latest
     container_name: selenium
+    user: root
     ports:
       - 4444:4444
       - 5900:5900
