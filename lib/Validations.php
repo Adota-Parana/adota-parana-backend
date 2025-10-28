@@ -6,6 +6,28 @@ use Core\Database\Database;
 
 class Validations
 {
+     public static function email($attribute, $obj)
+    {
+        if (!filter_var($obj->$attribute, FILTER_VALIDATE_EMAIL)) {
+            $obj->addError($attribute, 'não é um e-mail válido!');
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function phone($attribute, $obj)
+    {
+        $pattern = '/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/';
+
+        if (!preg_match($pattern, $obj->$attribute)) {
+            $obj->addError($attribute, 'não é um telefone válido!');
+            return false;
+        }
+
+        return true;
+    }
+
     public static function notEmpty($attribute, $obj)
     {
         if ($obj->$attribute === null || $obj->$attribute === '') {
