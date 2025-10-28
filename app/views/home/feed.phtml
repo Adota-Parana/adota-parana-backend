@@ -16,8 +16,8 @@
 
                         <?php if ($currentUser && ($currentUser->id === $pet->user_id || $currentUser->isAdmin())):
                          ?>
-                            <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-secondary">Editar</a>
-                            <form action="/pets/<?= $pet->id ?>/delete" method="POST" style="display:inline;">
+                            <a href="/pets/edit/<?= $pet->id ?>" class="btn btn-secondary">Editar</a>
+                            <form action="/pets/delete/<?= $pet->id ?>" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger">Excluir</button>
                             </form>
                         <?php endif; ?>

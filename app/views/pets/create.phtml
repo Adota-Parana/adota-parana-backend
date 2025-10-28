@@ -1,27 +1,79 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Pet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
 <div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">Adicionar Novo Pet</h3>
-                </div>
-                <div class="card-body">
+    <h2>Cadastrar Pet</h2>
+    
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach($errors as $error): ?>
+                    <li><?= htmlspecialchars($error) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
 
-                    <form action="/pets" method="POST">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome do Pet</label>
-                            <input type="text" class="form-control" id="name" name="name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Adicionar Pet</button>
-                    </form>
-                </div>
+    <form action="/pets/store" method="POST">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome do Pet</label>
+            <input type="text" class="form-control" id="name" name="name" required value="<?= htmlspecialchars($pet->name ?? '') ?>">
+        </div>
+
+        <div class="mb-3">
+            <label for="specie_id" class="form-label">Espécie</label>
+            <select class="form-select" id="specie_id" name="specie_id" required>
+                <option value="">Selecione</option>
+                <?php foreach ($speciesList as $species): ?>
+                    <option value="<?= $species->id ?>" <?= (isset($pet) && $pet->specie_id == $species->id) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($species->name) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="birth_date" class="form-label">Data de Nascimento</label>
+            <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?= htmlspecialchars($pet->birth_date ?? '') ?>">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Sexo</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sex" id="male" value="M" <?= (isset($pet) && $pet->sex == 'M') ? 'checked' : '' ?>>
+                <label class="form-check-label" for="male">Macho</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="sex" id="female" value="F" <?= (isset($pet) && $pet->sex == 'F') ? 'checked' : '' ?>>
+                <label class="form-check-label" for="female">Fêmea</label>
             </div>
         </div>
-    </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_vaccinated" name="is_vaccinated" value="1" <?= (isset($pet) && $pet->is_vaccinated) ? 'checked' : '' ?>>
+            <label class="form-check-label" for="is_vaccinated">Vacinado</label>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_neutered" name="is_neutered" value="1" <?= (isset($pet) && $pet->is_neutered) ? 'checked' : '' ?>>
+            <label class="form-check-label" for="is_neutered">Castrado</label>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Descrição</label>
+            <textarea class="form-control" id="description" name="description" rows="4"><?= htmlspecialchars($pet->description ?? '') ?></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cadastrar Pet</button>
+        <a href="/home/feed" class="btn btn-secondary">Cancelar</a>
+    </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

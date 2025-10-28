@@ -1,30 +1,84 @@
-<?php require __DIR__ . '/../layouts/_header.php'; ?>
-
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
                     <h3 class="mb-0">Editar Pet</h3>
                 </div>
                 <div class="card-body">
-                    <?php require __DIR__ . '/../layouts/_flash_message.php'; ?>
+                    <?php require __DIR__ . '/../layouts/_flash_message.phtml'; ?>
 
-                    <form action="/pets/<?= $pet->id ?>/update" method="POST">
+                    <form action="/pets/update/<?= $pet->id ?>" method="POST">
+                        <!-- Espécie -->
+                        <div class="mb-3">
+                            <label for="specie_id" class="form-label">Espécie</label>
+                            <select class="form-select" id="specie_id" name="specie_id" required>
+                                <option value="">Selecione a espécie</option>
+                                <?php foreach ($speciesList as $species): ?>
+                                    <option value="<?= $species->id ?>" <?= $pet->specie_id == $species->id ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($species->name) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Nome -->
                         <div class="mb-3">
                             <label for="name" class="form-label">Nome do Pet</label>
                             <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($pet->name) ?>" required>
                         </div>
+
+                        <!-- Data de nascimento -->
+                        <div class="mb-3">
+                            <label for="birth_date" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?= $pet->birth_date ?>" required>
+                        </div>
+
+                        <!-- Sexo -->
+                        <div class="mb-3">
+                            <label class="form-label">Sexo</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" id="sex_m" value="M" <?= $pet->sex == 'M' ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="sex_m">Macho</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="sex" id="sex_f" value="F" <?= $pet->sex == 'F' ? 'checked' : '' ?>>
+                                <label class="form-check-label" for="sex_f">Fêmea</label>
+                            </div>
+                        </div>
+
+                        <!-- Vacinação -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_vaccinated" name="is_vaccinated" value="1" <?= $pet->is_vaccinated ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_vaccinated">Vacinação em dia</label>
+                        </div>
+
+                        <!-- Castração -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_neutered" name="is_neutered" value="1" <?= $pet->is_neutered ? 'checked' : '' ?>>
+                            <label class="form-check-label" for="is_neutered">Castrado</label>
+                        </div>
+
+                        <!-- Descrição -->
                         <div class="mb-3">
                             <label for="description" class="form-label">Descrição</label>
                             <textarea class="form-control" id="description" name="description" rows="3" required><?= htmlspecialchars($pet->description) ?></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Atualizar Pet</button>
+
+                        <!-- Status -->
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" name="status" required>
+                                <option value="disponivel" <?= $pet->status == 'disponivel' ? 'selected' : '' ?>>Disponível</option>
+                                <option value="adotado" <?= $pet->status == 'adotado' ? 'selected' : '' ?>>Adotado</option>
+                                <option value="indisponivel" <?= $pet->status == 'indisponivel' ? 'selected' : '' ?>>Indisponível</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Atualizar Pet</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-<?php require __DIR__ . '/../layouts/_footer.php'; ?>

@@ -3,99 +3,147 @@
 namespace App\Controllers;
 
 use App\Models\Pet;
+use App\Models\Species;
 use App\Services\Auth;
+use Core\Http\Controllers\Controller;
 use Core\Http\Request;
 use Lib\FlashMessage;
 
-class PetController
+class PetController extends Controller
 {
     public function index()
     {
         $pets = Pet::all();
-        return view('/feed', ['pets' => $pets]);
+        $this->render('/home/feed', ['pets' => $pets]);
     }
 
     public function create()
     {
-        return view('/pets/create');
+         $speciesList = Species::all(); // pega todas as espécies do banco
+         return $this->render('/pets/create', [
+        'speciesList' => $speciesList
+    ]);
     }
 
-    public function store(\Core\Http\Request $request)
+   public function store(Request $request)
     {
         $user = Auth::user();
 
-        if(!$user){
+        if (!$user) {
             FlashMessage::danger('Você precisa estar logado para criar um pet!');
-            return redirect('/login');
+            return $this->redirectTo('/login');
         }
 
-        $pet = new Pet($request -> all());
-        $pet->user_id = $user -> id;
-        $pet->post_date = date('Y-m-d H:i:s');
-        $pet->status = 'disponivel';
+        $pet = new Pet();
 
-        if($pet->save()){
+        $pet->specie_id    = $request->post('specie_id');
+        $pet->name         = trim($request->post('name'));
+        $pet->birth_date   = $request->post('birth_date');
+        $pet->sex          = $request->post('sex');
+        $pet->is_neutered   = $request->post('is_neutered') ? 1 : 0;
+        $pet->is_vaccinated = $request->post('is_vaccinated') ? 1 : 0;
+        $pet->description  = trim($request->post('description'));
+        $pet->status       = 'disponivel';
+        $pet->user_id      = $user->id;
+        $pet->post_date    = date('Y-m-d H:i:s');
+
+        if ($pet->save()) {
             FlashMessage::success('Pet cadastrado com sucesso!');
-            return redirect('/feed');
-        }
-        else{
+            return $this->redirectTo('/home/feed');
+        } else {
             FlashMessage::danger('Erro ao cadastrar pet!');
-            return view('/pets/create');
+            return $this->render('/pets/create');
         }
     }
 
-    public function edit(int $id)
+
+    public function edit(Request $request)
     {
-        $pet = Pet::find($id);
+        // Melhorar isso!!
+        $uri = $_SERVER['REQUEST_URI']; 
+        $segments = explode('/', trim($uri, '/'));
+        $id = (int) end($segments);
+
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
         if(!$user || $user->id !== $pet->user_id){
             FlashMessage::danger('Você não tem permissão para editar este pet!');
-            return redirect('/feed');
+            $this->redirectTo('/home/feed');
         }
 
-        return view('/pets/edit', ['pet' => $pet]);
+        // Carregar todas as espécies
+        $speciesList = Species::all();
+
+        // Passar para a view
+        $this->render('/pets/edit', [
+            'pet' => $pet,
+            'speciesList' => $speciesList
+        ]);
     }
 
-    public function update(\Core\Http\Request $request, int $id)
+    public function update(Request $request)
     {
-        $pet = Pet::find($id);
+        // Extrai o ID da URL
+        $uri = $_SERVER['REQUEST_URI']; // ex: /pets/update/5
+        $segments = explode('/', trim($uri, '/'));
+
+        // Considerando URL no formato /pets/update/{id}
+        $id = (int) end($segments); // pega o último segmento
+
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
-        if(!$user || $user->id !== $pet->user_id){
+        if (!$pet || !$user || $user->id !== $pet->user_id) {
             FlashMessage::danger('Você não tem permissão para editar este pet!');
-            return redirect('/feed');
+            return $this->redirectTo('/home/feed');
         }
 
-        $pet->fill($request->all());
+      // Atualizando campo a campo
+        $pet->specie_id    = $request->post('specie_id');
+        $pet->name         = trim($request->post('name'));
+        $pet->birth_date   = $request->post('birth_date');
+        $pet->sex          = $request->post('sex');
+        $pet->is_neutered   = $request->post('is_neutered') ? 1 : 0;
+        $pet->is_vaccinated = $request->post('is_vaccinated') ? 1 : 0;
+        $pet->description  = trim($request->post('description'));
+        $pet->status       = $request->post('status');
 
-        if($pet->save()){
+
+        if ($pet->save()) {
             FlashMessage::success('Pet atualizado com sucesso!');
-            return redirect('/feed');
-        }
-        else{
-            FLashMessage::danger('Erro ao atualizar pet!');
-            return view('/pets/edit', ['pet' => $pet]);
+            return $this->redirectTo('/home/feed');
+        } else {
+            FlashMessage::danger('Erro ao atualizar pet!');
+            return $this->render('/pets/edit', ['pet' => $pet]);
         }
     }
 
-    public function destroy(int $id)
+    public function destroy(Request $request)
     {
-        $pet = Pet::find($id);
+        // Extrai o ID da URL
+        $uri = $_SERVER['REQUEST_URI']; // ex: /pets/update/5
+        $segments = explode('/', trim($uri, '/'));
+
+        // Considerando URL no formato /pets/update/{id}
+        $id = (int) end($segments); // pega o último segmento
+
+
+        $pet = Pet::findById($id);
         $user = Auth::user();
 
         if(!$user || $user->id !== $pet->user_id){
             FlashMessage::danger('Você não tem permissão para excluir este pet!');
-            return redirect('/feed');
+            $this->redirectTo('/home/feed');
         }
 
-        if($pet->delete()){
+        if($pet->destroy()){
             FlashMessage::success('Pet excluído com sucesso!');
-            return redirect('/feed');
+            $this->redirectTo('/home/feed');
         }
         else{
             FlashMessage::danger('Erro ao excluir pet!');
-            return redirect('/feed');
+            $this->redirectTo('/home/feed');
         }
     }
 }

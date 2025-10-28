@@ -39,12 +39,12 @@ Route::middleware('auth')->group(function() {
     Route::post('/user/profile/update', [UserController::class, 'update']);
 
     // Feed route
-    Route::get('/feed', [PetController::class, 'index'])->name('feed');
+    Route::get('/home/feed', [PetController::class, 'index'])->name('feed');
 
     // Pet routes
-    Route::post('/pets', [PetController::class, 'store']);
+    Route::post('/pets/store', [PetController::class, 'store']);
     Route::get('/pets/create', [PetController::class, 'create']);
-    Route::get('/pets/{id}/edit', [PetController::class, 'edit']);
-    Route::post('/pets/{id}/update', [PetController::class, 'update']);
-    Route::post('/pets/{id}/delete', [PetController::class, 'destroy']);
+    Route::get('/pets/edit/{id}', [PetController::class, 'edit']);
+    Route::post('/pets/update/{id}', [PetController::class, 'update']);
+    Route::post('/pets/delete/{id}', [PetController::class, 'destroy']);
 });
