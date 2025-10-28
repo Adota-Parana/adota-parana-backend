@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-USE `adota_parana`;
-
-=======
->>>>>>> origin/main
 SET foreign_key_checks = 0;
 
 DROP TABLE IF EXISTS users;
@@ -30,29 +25,6 @@ CREATE TABLE species (
   PRIMARY KEY (id)
 );
 
-<<<<<<< HEAD
-INSERT INTO `species` (`name`) VALUES
-('Cachorro'),
-('Gato'),
-('Pássaro'),
-('Outro');
-
-CREATE TABLE `pets` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `specie_id` INT NOT NULL,
-  `user_id` INT NOT NULL,
-  `name` varchar(25) NOT NULL,
-  `birth_date` date DEFAULT NULL,
-  `sex` char(1) DEFAULT NULL,
-  `is_vaccinated` boolean DEFAULT NULL,
-  `is_neutered` boolean DEFAULT NULL,
-  `description` varchar(300) DEFAULT NULL,
-  `status` varchar(25) NOT NULL,
-  `post_date` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  FOREIGN KEY (`specie_id`) REFERENCES `species` (`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-=======
 CREATE TABLE pets (
   id INT NOT NULL AUTO_INCREMENT,
   specie_id INT NOT NULL,
@@ -68,7 +40,6 @@ CREATE TABLE pets (
   PRIMARY KEY (id),
   FOREIGN KEY (specie_id) REFERENCES species (id),
   FOREIGN KEY (user_id) REFERENCES users (id)
->>>>>>> origin/main
 );
 
 CREATE TABLE pet_images (
@@ -112,22 +83,3 @@ CREATE TABLE moderation (
 
 SET foreign_key_checks = 1;
 
-<<<<<<< HEAD
--- ========================= Banco de teste =========================
-
-USE `adota_parana_test`;
-
-DROP TABLE IF EXISTS `users`;
-
-CREATE TABLE `users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` varchar(70) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `encrypted_password` varchar(64) NOT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `role` varchar(10) NOT NULL DEFAULT 'user',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`)
-);
-=======
->>>>>>> origin/main
