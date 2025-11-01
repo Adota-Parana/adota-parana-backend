@@ -45,7 +45,7 @@ CREATE TABLE pets (
 CREATE TABLE pet_images (
   id INT NOT NULL AUTO_INCREMENT,
   pet_id INT NOT NULL,
-  image blob,
+  image MEDIUMBLOB,
   PRIMARY KEY (id),
   FOREIGN KEY (pet_id) REFERENCES pets (id)
 );
@@ -82,4 +82,3 @@ CREATE TABLE moderation (
 );
 
 SET foreign_key_checks = 1;
-

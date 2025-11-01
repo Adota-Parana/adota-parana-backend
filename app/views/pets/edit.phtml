@@ -1,26 +1,49 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="mb-0">Editar Pet</h3>
-                </div>
-                <div class="card-body">
-                    <?php require __DIR__ . '/../layouts/_flash_message.php'; ?>
+            <h2>Editar Pet para Adoção</h2>
+            <hr>
 
-                    <form action="/pets/<?= $pet->id ?>/update" method="POST">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nome do Pet</label>
-                            <input type="text" class="form-control" id="name" name="name" value="<?= htmlspecialchars($pet->name) ?>" required>
+            <h4>Imagens Atuais</h4>
+            <div class="row mb-4">
+                <?php if (!empty($pet->images)): ?>
+                    <?php foreach ($pet->images as $image): ?>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <?php
+                                $imageData = base64_encode($image->image);
+                                $imageUrl = 'data:image/jpeg;base64,' . $imageData;
+                                ?>
+                                <img src="<?= $imageUrl ?>" class="card-img-top" style="height: 150px; object-fit: cover;">
+                                <div class="card-body text-center">
+                                    <form action="/pets/images/<?= $image->id ?>/delete" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir esta imagem?');">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="description" class="form-label">Descrição</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required><?= htmlspecialchars($pet->description) ?></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Atualizar Pet</button>
-                    </form>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p class="text-muted">Nenhuma imagem cadastrada.</p>
+                <?php endif; ?>
             </div>
+
+            <hr>
+
+            <form action="/pets/<?= $pet->id ?>/update" method="POST" enctype="multipart/form-data">
+
+                <div class="mb-3">
+                    <label for="pet_images" class="form-label">Adicionar Novas Imagens</label>
+                    <input type="file" class="form-control" id="pet_images" name="pet_images[]" multiple>
+                    <div class="form-text">Você pode selecionar várias imagens (jpg, jpeg, png).</div>
+                </div>
+
+                <?php 
+                    $buttonText = 'Salvar Alterações';
+                    include '_form.phtml'; 
+                ?>
+            </form>
         </div>
     </div>
 </div>

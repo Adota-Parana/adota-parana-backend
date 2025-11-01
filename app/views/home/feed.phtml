@@ -7,21 +7,29 @@
         <?php foreach ($pets as $pet): ?>
             <div class="col-md-4 mb-4">
                 <div class="card">
-                    <img src="https://via.placeholder.com/300x200" class="card-img-top" alt="Foto do pet">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= htmlspecialchars($pet->name) ?></h5>
-                        <p class="card-text"><?= htmlspecialchars($pet->description) ?></p>
-                        <a href="#" class="btn btn-primary">Ver detalhes</a>
-
+                    <a href="/pets/show/<?= $pet->id ?>" style="text-decoration: none; color: inherit;">
+                        <?php
+                        $imageUrl = '/assets/images/defaults/animals.jpeg'; // Imagem padrão
+                        if (!empty($pet->images) && isset($pet->images[0]) && $pet->images[0]->image) {
+                            $imageData = base64_encode($pet->images[0]->image);
+                            $imageUrl = 'data:image/jpeg;base64,' . $imageData;
+                        }
+                        ?>
+                        <img src="<?= $imageUrl ?>" class="card-img-top" alt="Foto do pet" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title"><?= htmlspecialchars($pet->name) ?></h5>
+                            <p class="card-text"><?= htmlspecialchars(substr($pet->description, 0, 100)) . (strlen($pet->description) > 100 ? '...' : '') ?></p>
+                        </div>
+                    </a>
+                    <div class="card-footer d-flex justify-content-end">
                         <?php if ($currentUser && ($currentUser->id === $pet->user_id || $currentUser->isAdmin())):
-                         ?>
-                            <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-sm btn-secondary">Editar</a>
+                        ?>
+                            <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-sm btn-secondary me-2">Editar</a>
                             <form action="/pets/<?= $pet->id ?>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza que deseja excluir este pet?');">
                                 <input type="hidden" name="_method" value="DELETE">
                                 <button type="submit" class="btn btn-sm btn-danger">Excluir</button>
                             </form>
                         <?php endif; ?>
-
                     </div>
                 </div>
             </div>

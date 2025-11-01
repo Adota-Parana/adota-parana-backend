@@ -4,7 +4,9 @@ namespace App\Controllers;
 
 use App\Models\Specie;
 use App\Models\Pet;
+use App\Models\PetImage;
 use App\Services\Auth;
+use App\Services\PetImageService;
 use Core\Http\Request;
 use Lib\FlashMessage;
 use Core\Http\Controllers\Controller;
@@ -14,11 +16,31 @@ class PetController extends Controller
     public function index()
     {
         $pets = Pet::all();
+        foreach ($pets as $pet) {
+            $pet->images = $pet->images()->get();
+        }
+
         $currentUser = Auth::user();
         $this->render('home/feed', [
             'pets' => $pets,
             'currentUser' => $currentUser
         ]);
+    }
+
+    public function show(Request $request): void
+    {
+        $id = (int) $request->getParam('id');
+        $pet = Pet::findById($id);
+
+        if ($pet === null) {
+            FlashMessage::danger('Pet não encontrado!');
+            header('Location: /feed');
+            return;
+        }
+
+        $pet->images = $pet->images()->get();
+
+        $this->render('pets/show', ['pet' => $pet]);
     }
 
     public function create()
@@ -56,6 +78,10 @@ class PetController extends Controller
         $pet->status = 'disponível';
 
         if ($pet->save()) {
+            if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
+                PetImageService::saveImages($_FILES['pet_images'], $pet->id);
+            }
+
             FlashMessage::success('Pet cadastrado com sucesso!');
             header('Location: /feed');
             return;
@@ -80,6 +106,8 @@ class PetController extends Controller
             header('Location: /feed');
             return;
         }
+
+        $pet->images = $pet->images()->get();
 
         $this->render('pets/edit', ['pet' => $pet, 'species' => Specie::all()]);
     }
@@ -107,8 +135,12 @@ class PetController extends Controller
         $pet->description = $data['description'] ?? $pet->description;
 
         if ($pet->save()) {
+            if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
+                PetImageService::saveImages($_FILES['pet_images'], $pet->id);
+            }
+
             FlashMessage::success('Pet atualizado com sucesso!');
-            header('Location: /feed');
+            header('Location: /pets/' . $pet->id . '/edit');
             return;
         }
         $this->render('pets/edit', [
@@ -150,6 +182,35 @@ class PetController extends Controller
         }
 
         header('Location: /feed');
+    }
+
+    public function destroyImage(Request $request): void
+    {
+        $imageId = (int) $request->getParam('id');
+        $petImage = PetImage::findById($imageId);
+
+        if (!$petImage) {
+            FlashMessage::danger('Imagem não encontrada!');
+            header('Location: /feed');
+            return;
+        }
+
+        $pet = Pet::findById($petImage->pet_id);
+        $user = Auth::user();
+
+        if (!$this->isOwner($user, $pet)) {
+            FlashMessage::danger('Você não tem permissão para excluir esta imagem!');
+            header('Location: /feed');
+            return;
+        }
+
+        if ($petImage->destroy()) {
+            FlashMessage::success('Imagem excluída com sucesso!');
+        } else {
+            FlashMessage::danger('Erro ao excluir a imagem!');
+        }
+
+        header('Location: /pets/' . $pet->id . '/edit');
     }
 
 }

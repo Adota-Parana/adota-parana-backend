@@ -69,12 +69,13 @@ services:
       - selenium
       - php
     environment:
-      APP_ENV:
-      DB_HOST:
-      DB_PORT:
-      DB_DATABASE:
-      DB_USERNAME:
-      DB_PASSWORD:
+      APP_ENV: testing
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: adota_parana
+      DB_USERNAME: root
+      DB_PASSWORD: rootpwd
+
 networks:
   app-network:
     driver: bridge

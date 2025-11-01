@@ -1,5 +1,4 @@
 <?php
-// Define os valores padrão para evitar erros de 'undefined variable'
 $petName = $pet->name ?? '';
 $specieId = $pet->specie_id ?? '';
 $birthDate = $pet->birth_date ?? '';
@@ -30,6 +29,12 @@ $description = $pet->description ?? '';
     <?php if (isset($errors['specie_id'])) : ?>
         <div class="invalid-feedback"><?= $errors['specie_id'] ?></div>
     <?php endif; ?>
+</div>
+
+<div class="mb-3">
+    <label for="pet_images" class="form-label">Fotos do Pet</label>
+    <input type="file" class="form-control" id="pet_images" name="pet_images[]" multiple>
+    <div class="form-text">Você pode selecionar várias imagens para o seu pet (jpg, jpeg, png, gif).</div>
 </div>
 
 <div class="mb-3">
@@ -75,14 +80,6 @@ $description = $pet->description ?? '';
     <label for="description" class="form-label">Descrição</label>
     <textarea class="form-control" id="description" name="description" rows="4"><?= htmlspecialchars($description) ?></textarea>
 </div>
-
-<!-- 
-<div class="mb-3">
-    <label for="images" class="form-label">Fotos do Pet</label>
-    <input type="file" class="form-control" id="images" name="images[]" multiple>
-    <div class="form-text">Você pode selecionar várias imagens.</div>
-</div>
--->
 
 <button type="submit" class="btn btn-primary"><?= $buttonText ?? 'Salvar' ?></button>
 <a href="/feed" class="btn btn-secondary">Cancelar</a>
