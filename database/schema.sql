@@ -43,11 +43,11 @@ CREATE TABLE pets (
 );
 
 CREATE TABLE pet_images (
-  id INT NOT NULL AUTO_INCREMENT,
-  pet_id INT NOT NULL,
-  image blob,
-  PRIMARY KEY (id),
-  FOREIGN KEY (pet_id) REFERENCES pets (id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pet_id INT NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    uploaded_at DATETIME NOT NULL,
+    FOREIGN KEY (pet_id) REFERENCES pets(id)
 );
 
 CREATE TABLE interesting (

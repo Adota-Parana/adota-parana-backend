@@ -47,12 +47,23 @@ class PetController extends Controller
         $pet->user_id      = $user->id;
         $pet->post_date    = date('Y-m-d H:i:s');
 
+        if (!$pet->isValid()) {
+            $speciesList = Species::all();
+            return $this->render('/pets/create', [
+                'pet' => $pet,
+                'errors' => $pet->errors,
+                'speciesList' => $speciesList
+            ]);
+        }   
+
         if ($pet->save()) {
             FlashMessage::success('Pet cadastrado com sucesso!');
             return $this->redirectTo('/home/feed');
+            exit;
         } else {
             FlashMessage::danger('Erro ao cadastrar pet!');
             return $this->render('/pets/create');
+            exit;
         }
     }
 
@@ -109,6 +120,14 @@ class PetController extends Controller
         $pet->description  = trim($request->post('description'));
         $pet->status       = $request->post('status');
 
+        if (!$pet->isValid()) {
+            $speciesList = Species::all();
+            return $this->render('/pets/edit', [
+                'pet' => $pet,
+                'errors' => $pet->errors,
+                'speciesList' => $speciesList
+            ]);
+        }   
 
         if ($pet->save()) {
             FlashMessage::success('Pet atualizado com sucesso!');

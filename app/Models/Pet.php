@@ -39,7 +39,8 @@ class Pet extends Model
         Validations::notEmpty('specie_id', $this);
         Validations::notEmpty('user_id', $this);
         Validations::notEmpty('status', $this);
-        Validations::notEmpty('post_date', $this);
+        Validations::notEmpty('birth_date', $this);
+        Validations::notEmpty('description', $this);
     }
 
         public function species(): ?Species

@@ -8,26 +8,31 @@
 <body>
 <div class="container mt-5">
     <h2>Cadastrar Pet</h2>
-    
-    <?php if (!empty($errors)): ?>
-        <div class="alert alert-danger">
-            <ul>
-                <?php foreach($errors as $error): ?>
-                    <li><?= htmlspecialchars($error) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
 
-    <form action="/pets/store" method="POST">
+    <form action="/pets/store" method="POST" novalidate>
+        <!-- Nome -->
         <div class="mb-3">
             <label for="name" class="form-label">Nome do Pet</label>
-            <input type="text" class="form-control" id="name" name="name" required value="<?= htmlspecialchars($pet->name ?? '') ?>">
+            <input type="text" 
+                   class="form-control <?= !empty($errors['name']) ? 'is-invalid' : '' ?>" 
+                   id="name" 
+                   name="name" 
+                   required 
+                   value="<?= htmlspecialchars($pet->name ?? '') ?>">
+            <?php if (!empty($errors['name'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($errors['name']) ?>
+                </div>
+            <?php endif; ?>
         </div>
 
+        <!-- Espécie -->
         <div class="mb-3">
             <label for="specie_id" class="form-label">Espécie</label>
-            <select class="form-select" id="specie_id" name="specie_id" required>
+            <select class="form-select <?= !empty($errors['specie_id']) ? 'is-invalid' : '' ?>" 
+                    id="specie_id" 
+                    name="specie_id" 
+                    required>
                 <option value="">Selecione</option>
                 <?php foreach ($speciesList as $species): ?>
                     <option value="<?= $species->id ?>" <?= (isset($pet) && $pet->specie_id == $species->id) ? 'selected' : '' ?>>
@@ -35,25 +40,49 @@
                     </option>
                 <?php endforeach; ?>
             </select>
+            <?php if (!empty($errors['specie_id'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($errors['specie_id']) ?>
+                </div>
+            <?php endif; ?>
         </div>
 
+        <!-- Data de nascimento -->
         <div class="mb-3">
             <label for="birth_date" class="form-label">Data de Nascimento</label>
-            <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?= htmlspecialchars($pet->birth_date ?? '') ?>">
+            <input type="date" 
+                   class="form-control <?= !empty($errors['birth_date']) ? 'is-invalid' : '' ?>" 
+                   id="birth_date" 
+                   name="birth_date" 
+                   value="<?= htmlspecialchars($pet->birth_date ?? '') ?>">
+            <?php if (!empty($errors['birth_date'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($errors['birth_date']) ?>
+                </div>
+            <?php endif; ?>
         </div>
 
+        <!-- Sexo -->
         <div class="mb-3">
             <label class="form-label">Sexo</label><br>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="sex" id="male" value="M" <?= (isset($pet) && $pet->sex == 'M') ? 'checked' : '' ?>>
+                <input class="form-check-input <?= !empty($errors['sex']) ? 'is-invalid' : '' ?>" 
+                       type="radio" name="sex" id="male" value="M" <?= (isset($pet) && $pet->sex == 'M') ? 'checked' : '' ?>>
                 <label class="form-check-label" for="male">Macho</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="sex" id="female" value="F" <?= (isset($pet) && $pet->sex == 'F') ? 'checked' : '' ?>>
+                <input class="form-check-input <?= !empty($errors['sex']) ? 'is-invalid' : '' ?>" 
+                       type="radio" name="sex" id="female" value="F" <?= (isset($pet) && $pet->sex == 'F') ? 'checked' : '' ?>>
                 <label class="form-check-label" for="female">Fêmea</label>
             </div>
+            <?php if (!empty($errors['sex'])): ?>
+                <div class="invalid-feedback d-block">
+                    <?= htmlspecialchars($errors['sex']) ?>
+                </div>
+            <?php endif; ?>
         </div>
 
+        <!-- Vacinado e Castrado -->
         <div class="mb-3 form-check">
             <input type="checkbox" class="form-check-input" id="is_vaccinated" name="is_vaccinated" value="1" <?= (isset($pet) && $pet->is_vaccinated) ? 'checked' : '' ?>>
             <label class="form-check-label" for="is_vaccinated">Vacinado</label>
@@ -64,9 +93,18 @@
             <label class="form-check-label" for="is_neutered">Castrado</label>
         </div>
 
+        <!-- Descrição -->
         <div class="mb-3">
             <label for="description" class="form-label">Descrição</label>
-            <textarea class="form-control" id="description" name="description" rows="4"><?= htmlspecialchars($pet->description ?? '') ?></textarea>
+            <textarea class="form-control <?= !empty($errors['description']) ? 'is-invalid' : '' ?>" 
+                      id="description" 
+                      name="description" 
+                      rows="4"><?= htmlspecialchars($pet->description ?? '') ?></textarea>
+            <?php if (!empty($errors['description'])): ?>
+                <div class="invalid-feedback">
+                    <?= htmlspecialchars($errors['description']) ?>
+                </div>
+            <?php endif; ?>
         </div>
 
         <button type="submit" class="btn btn-primary">Cadastrar Pet</button>
