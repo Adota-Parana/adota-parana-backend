@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PetImageService;
 use Lib\Validations;
 use Core\Database\ActiveRecord\Model;
 
@@ -35,5 +36,12 @@ class Pet extends Model
         Validations::notEmpty('user_id', $this);
         Validations::notEmpty('status', $this);
         Validations::notEmpty('post_date', $this);
+        Validations::notEmpty('sex', $this);
+        Validations::notEmpty('birth_date', $this);
+    }
+
+    public function petsImage(): PetImageService
+    {
+        return new PetImageService($this);
     }
 }

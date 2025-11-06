@@ -39,12 +39,15 @@ $description = $pet->description ?? '';
 
 <div class="mb-3">
     <label for="birth_date" class="form-label">Data de Nascimento (aproximada)</label>
-    <input type="date" class="form-control" id="birth_date" name="birth_date" value="<?= htmlspecialchars($birthDate) ?>">
+    <input type="date" class="form-control <?= isset($errors['birth_date']) ? 'is-invalid' : '' ?>" id="birth_date" name="birth_date" value="<?= htmlspecialchars($birthDate) ?>">
+    <?php if (isset($errors['birth_date'])) : ?>
+        <div class="invalid-feedback"><?= $errors['birth_date'] ?></div>
+    <?php endif; ?>
 </div>
 
 <div class="mb-3">
     <label class="form-label">Sexo</label>
-    <div>
+    <div class="<?= isset($errors['sex']) ? 'is-invalid' : '' ?>">
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="sex" id="sex_m" value="M" <?= ($sex === 'M') ? 'checked' : '' ?>>
             <label class="form-check-label" for="sex_m">Macho</label>
@@ -54,7 +57,12 @@ $description = $pet->description ?? '';
             <label class="form-check-label" for="sex_f">Fêmea</label>
         </div>
     </div>
+
+    <?php if (isset($errors['sex'])) : ?>
+        <div class="text-danger small"><?= $errors['sex'] ?></div>
+    <?php endif; ?>
 </div>
+
 
 <div class="mb-3">
     <div class="form-check">

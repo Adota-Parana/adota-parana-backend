@@ -32,7 +32,7 @@ class PetController extends Controller
         $id = (int) $request->getParam('id');
         $pet = Pet::findById($id);
 
-        if ($pet === null) {
+        if (!$pet) {
             FlashMessage::danger('Pet não encontrado!');
             header('Location: /feed');
             return;
@@ -53,7 +53,7 @@ class PetController extends Controller
         ]);
     }
 
-    public function store(Request $request): void
+    public function store(Request $request)
     {
         $user = Auth::user();
 
@@ -63,21 +63,21 @@ class PetController extends Controller
             return;
         }
 
-        $pet = new Pet();
-        $data = $_POST;
-
-        $pet->name = $data['name'] ?? null;
-        $pet->specie_id = $data['specie_id'] ?? null;
-        $pet->birth_date = empty($data['birth_date']) ? null : $data['birth_date'];
-        $pet->sex = $data['sex'] ?? null;
-        $pet->is_vaccinated = $data['is_vaccinated'] ?? 0;
-        $pet->is_neutered = $data['is_neutered'] ?? 0;
-        $pet->description = $data['description'] ?? null;
+        $pet = new Pet($_POST);
         $pet->user_id = $user->id;
         $pet->post_date = date('Y-m-d H:i:s');
         $pet->status = 'disponível';
 
+        if (!$pet->isValid()) {
+            return $this->render('pets/create', [
+                'pet' => $pet,
+                'errors' => $pet->errors,
+                'species' => Specie::all()
+            ]);
+        }
+
         if ($pet->save()) {
+
             if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
                 PetImageService::saveImages($_FILES['pet_images'], $pet->id);
             }
@@ -85,14 +85,14 @@ class PetController extends Controller
             FlashMessage::success('Pet cadastrado com sucesso!');
             header('Location: /feed');
             return;
-        } else {
-            FlashMessage::danger('Erro ao cadastrar pet! Verifique os dados.');
-            $this->render('pets/create', [
-                'pet' => $pet,
-                'errors' => $pet->errors,
-                'species' => Specie::all()
-            ]);
         }
+
+        FlashMessage::danger('Erro ao cadastrar pet!');
+        $this->render('pets/create', [
+            'pet' => $pet,
+            'errors' => $pet->errors,
+            'species' => Specie::all()
+        ]);
     }
 
     public function edit(Request $request): void
@@ -124,42 +124,14 @@ class PetController extends Controller
             return;
         }
 
-        $data = $_POST;
+        // ✅ Apenas adiciona imagens se forem enviadas
+        if (!empty($_FILES['pet_images']['name'][0])) {
+            PetImageService::saveImages($_FILES['pet_images'], $pet->id);
+            FlashMessage::success('Imagens adicionadas com sucesso!');
+        } 
 
-        $pet->name = $data['name'] ?? $pet->name;
-        $pet->specie_id = $data['specie_id'] ?? $pet->specie_id;
-        $pet->birth_date = empty($data['birth_date']) ? $pet->birth_date : $data['birth_date'];
-        $pet->sex = $data['sex'] ?? $pet->sex;
-        $pet->is_vaccinated = $data['is_vaccinated'] ?? 0;
-        $pet->is_neutered = $data['is_neutered'] ?? 0;
-        $pet->description = $data['description'] ?? $pet->description;
-
-        if ($pet->save()) {
-            if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
-                PetImageService::saveImages($_FILES['pet_images'], $pet->id);
-            }
-
-            FlashMessage::success('Pet atualizado com sucesso!');
-            header('Location: /pets/' . $pet->id . '/edit');
-            return;
-        }
-        $this->render('pets/edit', [
-            'pet' => $pet,
-            'errors' => $pet->errors,
-            'species' => Specie::all()
-        ]);
-    }
-    private function isOwner(?object $user, ?object $pet): bool
-    {
-        if (!$user || !$pet) {
-            return false;
-        }
-
-        if ($user->role == 'admin') {
-            return true;
-        }
-
-        return $user->id === $pet->user_id;
+        // ✅ Sempre redireciona de volta para a edição
+        header('Location: /feed');
     }
 
     public function destroy(Request $request): void
@@ -174,10 +146,11 @@ class PetController extends Controller
             return;
         }
 
+        $this->deleteImagesByPet($pet->id);
+
         if ($pet->destroy()) {
             FlashMessage::success('Pet excluído com sucesso!');
-        } 
-        else {
+        } else {
             FlashMessage::danger('Erro ao excluir pet!');
         }
 
@@ -204,13 +177,41 @@ class PetController extends Controller
             return;
         }
 
-        if ($petImage->destroy()) {
-            FlashMessage::success('Imagem excluída com sucesso!');
-        } else {
-            FlashMessage::danger('Erro ao excluir a imagem!');
+        // ✅ Caminho da imagem
+        $filePath = __DIR__ . '/../../public/' . $petImage->image_path;
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
         }
 
+        // ✅ Remove do banco
+        $petImage->destroy();
+
+        FlashMessage::success('Imagem excluída com sucesso!');
         header('Location: /pets/' . $pet->id . '/edit');
     }
 
+        public static function deleteImagesByPet(int $petId): void
+    {
+        $uploadDir = __DIR__ . '/../../public/';
+
+        $images = PetImage::where(['pet_id' => $petId]);
+
+        if (!$images) {
+            return;
+        }
+
+        foreach ($images as $image) {
+            $filePath = $uploadDir . $image->image_path;
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+    }
+
+
+    private function isOwner(?object $user, ?object $pet): bool
+    {
+        return $user && $pet && ($user->role === 'admin' || $user->id === $pet->user_id);
+    }
 }

@@ -45,10 +45,15 @@ CREATE TABLE pets (
 CREATE TABLE pet_images (
   id INT NOT NULL AUTO_INCREMENT,
   pet_id INT NOT NULL,
-  image MEDIUMBLOB,
+  image_path VARCHAR(255) NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (pet_id) REFERENCES pets (id)
-);
+  INDEX (pet_id),
+  CONSTRAINT fk_pet_images_pet
+      FOREIGN KEY (pet_id)
+      REFERENCES pets(id)
+      ON DELETE CASCADE
+)
+ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE interesting (
   user_id INT NOT NULL,
