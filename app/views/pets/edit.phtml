@@ -30,13 +30,6 @@
             <hr>
 
             <form action="/pets/<?= $pet->id ?>/update" method="POST" enctype="multipart/form-data">
-
-                <div class="mb-3">
-                    <label for="pet_images" class="form-label">Adicionar Novas Imagens</label>
-                    <input type="file" class="form-control" id="pet_images" name="pet_images[]" multiple>
-                    <div class="form-text">Você pode selecionar várias imagens (jpg, jpeg, png).</div>
-                </div>
-
                 <?php 
                     $buttonText = 'Salvar Alterações';
                     include '_form.phtml'; 

@@ -68,6 +68,7 @@ class PetController extends Controller
         $pet->post_date = date('Y-m-d H:i:s');
         $pet->status = 'disponível';
 
+        // ✅ Valida dados do Pet (nome, espécie, etc)
         if (!$pet->isValid()) {
             return $this->render('pets/create', [
                 'pet' => $pet,
@@ -76,9 +77,26 @@ class PetController extends Controller
             ]);
         }
 
+        // ✅ Se houver imagens, valida antes de salvar o Pet
+        if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
+            $imageErrors = PetImageService::validateImages($_FILES['pet_images']);
+
+            if (!empty($imageErrors)) {
+                FlashMessage::danger(implode("<br>", $imageErrors));
+
+                return $this->render('pets/create', [
+                    'pet' => $pet,
+                    'errors' => $pet->errors,
+                    'species' => Specie::all()
+                ]);
+            }
+        }
+
+        // ✅ Agora sim salva o pet
         if ($pet->save()) {
 
-            if (isset($_FILES['pet_images']) && !empty($_FILES['pet_images']['name'][0])) {
+            // ✅ Agora salva as imagens, pois já passou na validação
+            if (!empty($_FILES['pet_images']['name'][0])) {
                 PetImageService::saveImages($_FILES['pet_images'], $pet->id);
             }
 
@@ -112,7 +130,7 @@ class PetController extends Controller
         $this->render('pets/edit', ['pet' => $pet, 'species' => Specie::all()]);
     }
 
-    public function update(Request $request): void
+    public function update(Request $request)
     {
         $id = (int) $request->getParam('id');
         $pet = Pet::findById($id);
@@ -122,16 +140,29 @@ class PetController extends Controller
             FlashMessage::danger('Você não tem permissão para editar este pet!');
             header('Location: /feed');
             return;
-        }
+      }   
 
-        // ✅ Apenas adiciona imagens se forem enviadas
         if (!empty($_FILES['pet_images']['name'][0])) {
+
+            $imageErrors = \App\Services\PetImageService::validateImages($_FILES['pet_images']);
+
+            if (!empty($imageErrors)) {
+                FlashMessage::danger(implode("<br>", $imageErrors));
+
+                $pet->images = $pet->images()->get();
+
+                return $this->render('pets/edit', [
+                    'pet' => $pet,
+                    'species' => Specie::all()
+                ]);
+            }
+
             PetImageService::saveImages($_FILES['pet_images'], $pet->id);
             FlashMessage::success('Imagens adicionadas com sucesso!');
-        } 
+        }
 
-        // ✅ Sempre redireciona de volta para a edição
-        header('Location: /feed');
+        header('Location: /pets/' . $pet->id . '/edit');
+        exit;
     }
 
     public function destroy(Request $request): void
