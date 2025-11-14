@@ -3,9 +3,9 @@
 namespace App\Controllers;
 
 use Core\Http\Request;
-use Core\Http\Controllers\Controller;
 use App\Services\Auth;
 use Lib\FlashMessage;
+use Core\Http\Controllers\Controller;
 
 class UserController extends Controller
 {

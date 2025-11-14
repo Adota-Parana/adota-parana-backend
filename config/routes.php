@@ -42,9 +42,13 @@ Route::middleware('auth')->group(function() {
     Route::get('/feed', [PetController::class, 'index'])->name('feed');
 
     // Pet routes
+    Route::get('/pets/show/{id}', [PetController::class, 'show']);
     Route::post('/pets', [PetController::class, 'store']);
     Route::get('/pets/create', [PetController::class, 'create']);
     Route::get('/pets/{id}/edit', [PetController::class, 'edit']);
+    
     Route::post('/pets/{id}/update', [PetController::class, 'update']);
-    Route::post('/pets/{id}/delete', [PetController::class, 'destroy']);
+    
+    Route::delete('/pets/{id}/delete', [PetController::class, 'destroy']);
+    Route::delete('/pets/images/{id}/delete', [PetController::class, 'destroyImage']);
 });
