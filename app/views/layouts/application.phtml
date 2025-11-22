@@ -29,6 +29,9 @@ $currentUser = \App\Services\Auth::user();
                         <a class="nav-link" href="/pets/create">Adicionar Pet</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="/user/interests">Meus Interesses</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="<?= $currentUser->role === 'admin' ? '/admin/dashboard' : '/user/dashboard' ?>">Meu Painel</a>
                     </li>
                     <li class="nav-item">

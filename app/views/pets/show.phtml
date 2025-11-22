@@ -42,7 +42,16 @@
             <p><strong>Castrado:</strong> <?= $pet->is_neutered ? 'Sim' : 'Não' ?></p>
             <hr>
 
-            <a href="/adocao/<?= $pet->id ?>" class="btn btn-success btn-lg">Quero Adotar!</a>
+            <?php if ($currentUser && $currentUser->id !== $pet->user_id): ?>
+                <form action="/pets/<?= $pet->id ?>/interest" method="POST">
+                    <button type="submit" class="btn btn-success btn-lg">Quero Adotar!</button>
+                </form>
+            <?php elseif ($currentUser && $currentUser->id === $pet->user_id): ?>
+                <a href="/pets/<?= $pet->id ?>/edit" class="btn btn-primary">Editar Pet</a>
+            <?php else: ?>
+                <a href="/login" class="btn btn-primary">Faça login para adotar</a>
+            <?php endif; ?>
+
         </div>
     </div>
 </div>

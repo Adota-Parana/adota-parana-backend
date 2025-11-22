@@ -39,8 +39,12 @@ class PetController extends Controller
         }
 
         $pet->images = $pet->images()->get();
+        $currentUser = Auth::user();
 
-        $this->render('pets/show', ['pet' => $pet]);
+        $this->render('pets/show', [
+            'pet' => $pet,
+            'currentUser' => $currentUser
+        ]);
     }
 
     public function create()

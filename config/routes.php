@@ -5,6 +5,7 @@ use App\Controllers\AuthenticationsController;
 use App\Controllers\AdminController;
 use App\Controllers\PetController;
 use App\Controllers\UserController;
+use App\Controllers\InterestController;
 
 use App\Middleware\Admin;
 
@@ -51,4 +52,9 @@ Route::middleware('auth')->group(function() {
     
     Route::delete('/pets/{id}/delete', [PetController::class, 'destroy']);
     Route::delete('/pets/images/{id}/delete', [PetController::class, 'destroyImage']);
+
+    // Interest Routes
+    Route::post('/pets/{pet_id}/interest', [InterestController::class, 'store']);
+    Route::get('/user/interests', [InterestController::class, 'index']);
+    Route::post('/interests/update', [InterestController::class, 'update']);
 });

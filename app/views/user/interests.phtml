@@ -1,0 +1,83 @@
+<div class="container mt-5">
+    <h2>Meus Interesses</h2>
+    <hr>
+
+    <!-- Interesses que EU demonstrei -->
+    <div class="my-interests">
+        <h4>Interesses que Demonstrei</h4>
+        <?php if (empty($myInterests)): ?>
+            <p>Você ainda não demonstrou interesse em nenhum pet.</p>
+        <?php else: ?>
+            <ul class="list-group">
+                <?php foreach ($myInterests as $interest): ?>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            Interesse em: <strong><a href="/pets/show/<?= $interest->pet->id ?>"><?= htmlspecialchars($interest->pet->name) ?></a></strong>
+                            <br>
+                            Status: 
+                            <?php if ($interest->status == 'pending'): ?>
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            <?php elseif ($interest->status == 'approved'): ?>
+                                <span class="badge bg-success">Aprovado</span>
+                                <br>
+                                <small>Contato do doador: <?= htmlspecialchars($interest->pet_owner_email) ?></small>
+                            <?php elseif ($interest->status == 'rejected'): ?>
+                                <span class="badge bg-danger">Rejeitado</span>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Interesses recebidos nos MEUS pets -->
+    <div class="received-interests">
+        <h4>Interesses Recebidos nos Meus Pets</h4>
+        <?php if (empty($receivedInterests)): ?>
+            <p>Nenhum interesse recebido nos seus pets ainda.</p>
+        <?php else: ?>
+            <ul class="list-group">
+                <?php foreach ($receivedInterests as $interest): ?>
+                    <li class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Interesse em: <strong><a href="/pets/show/<?= $interest->pet->id ?>"><?= htmlspecialchars($interest->pet->name) ?></a></strong></h5>
+                            <small>Data: <?= date('d/m/Y', strtotime($interest->interested_date)) ?></small>
+                        </div>
+                        <p class="mb-1">Interessado: <?= htmlspecialchars($interest->user->name) ?> (<?= htmlspecialchars($interest->user->email) ?>)</p>
+                        
+                        <div>
+                            Status: 
+                            <?php if ($interest->status == 'pending'): ?>
+                                <span class="badge bg-warning text-dark">Pendente</span>
+                            <?php elseif ($interest->status == 'approved'): ?>
+                                <span class="badge bg-success">Aprovado</span>
+                            <?php elseif ($interest->status == 'rejected'): ?>
+                                <span class="badge bg-danger">Rejeitado</span>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if ($interest->status == 'pending'): ?>
+                            <div class="mt-2">
+                                <form action="/interests/update" method="POST" style="display: inline-block;">
+                                    <input type="hidden" name="user_id" value="<?= $interest->user_id ?>">
+                                    <input type="hidden" name="pet_id" value="<?= $interest->pet_id ?>">
+                                    <input type="hidden" name="status" value="approved">
+                                    <button type="submit" class="btn btn-sm btn-success">Aprovar</button>
+                                </form>
+                                <form action="/interests/update" method="POST" style="display: inline-block;">
+                                    <input type="hidden" name="user_id" value="<?= $interest->user_id ?>">
+                                    <input type="hidden" name="pet_id" value="<?= $interest->pet_id ?>">
+                                    <input type="hidden" name="status" value="rejected">
+                                    <button type="submit" class="btn btn-sm btn-danger">Rejeitar</button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+</div>
